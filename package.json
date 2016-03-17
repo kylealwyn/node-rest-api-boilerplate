@@ -1,0 +1,32 @@
+{
+  "name": "express-es6-rest-api",
+  "version": "0.2.2",
+  "description": "Starter project for an ES6 RESTful Express API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/developit/express-es6-rest-api.git"
+  },
+  "author": "Jason Miller <jason@developit.ca>",
+  "license": "MIT",
+  "dependencies": {
+    "babel": "^5.8.21",
+    "body-parser": "^1.13.3",
+    "compression": "^1.5.2",
+    "cors": "^2.7.1",
+    "errorhandler": "^1.4.3",
+    "express": "^4.13.3",
+    "method-override": "^2.3.5",
+    "morgan": "^1.7.0",
+    "multer": "^1.1.0",
+    "resource-router-middleware": "^0.5.1"
+  },
+  "bugs": {
+    "url": "https://github.com/developit/express-es6-rest-api/issues"
+  },
+  "homepage": "https://github.com/developit/express-es6-rest-api#readme"
+}
