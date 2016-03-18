@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+let Schema = mongoose.Schema;
 
-let PostSchema = new mongoose.Schema({
+let PostSchema = new Schema({
   likes: Number,
   title: String
 }, {

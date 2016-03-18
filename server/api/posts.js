@@ -1,18 +1,17 @@
 import resource from 'resource-router-middleware';
+import _ from 'lodash';
 import Post from '../models/post';
 
 export default resource({
 
 	/** Property name to store preloaded entity on `request`. */
-	id : 'facet',
+	id : 'post',
 
 	/** For requests with an `id`, you can auto-load the entity.
 	 *  Errors terminate the request, success sets `req[id] = data`.
 	 */
-	load(req, id, callback) {
-		var facet = posts.find( facet => facet.id===id ),
-			err = facet ? null : 'Not found';
-		callback(err, facet);
+	load(req, id, done) {
+		Post.findOne(id, (err, post) => done(err, post));
 	},
 
 	/** GET / - List all entities */
@@ -38,13 +37,18 @@ export default resource({
 	},
 
 	/** PUT /:id - Update a given entity */
-	update({ facet, body }, res) {
-		for (let key in body) {
-			if (key!=='id') {
-				facet[key] = body[key];
+	update({ post, body }, res) {
+		console.log(post);
+		post = _.assign(post, body);
+		console.log(post);
+		post.save(err => {
+			if (err) {
+				res.sendStatus(400);
+			} else {
+				res.sendStatus(204);
 			}
-		}
-		res.sendStatus(204);
+		});
+
 	},
 
 	/** DELETE /:id - Delete a given entity */
