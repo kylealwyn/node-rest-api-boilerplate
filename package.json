@@ -25,6 +25,7 @@
     "mongoose": "^4.4.7",
     "morgan": "^1.7.0",
     "multer": "^1.1.0",
+    "passport": "^0.3.2",
     "resource-router-middleware": "^0.5.1"
   },
   "bugs": {
