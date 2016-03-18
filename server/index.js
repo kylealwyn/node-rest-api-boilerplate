@@ -8,6 +8,7 @@ import morgan from 'morgan';
 import db from './db';
 import middleware from './middleware';
 import api from './api';
+
 var app = express();
 app.server = http.createServer(app);
 
@@ -16,7 +17,7 @@ app.use(cors({
 	exposedHeaders: ['Link']
 }));
 
-app.use(morgan('combined'));
+app.use(morgan('dev'));
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,7 +30,7 @@ if ('development' == app.get('env')) {
 db( λ => {
 	app.use(middleware());
 	app.use('/api', api());
-	app.server.listen(process.env.PORT || 8080);
+	app.server.listen(process.env.PORT || 8000);
 	console.log(`Magic happening on port ${app.server.address().port}`);
 });
 

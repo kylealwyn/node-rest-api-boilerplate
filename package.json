@@ -21,6 +21,7 @@
     "errorhandler": "^1.4.3",
     "express": "^4.13.3",
     "method-override": "^2.3.5",
+    "mongoose": "^4.4.7",
     "morgan": "^1.7.0",
     "multer": "^1.1.0",
     "resource-router-middleware": "^0.5.1"
