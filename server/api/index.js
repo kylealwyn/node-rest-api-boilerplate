@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import posts from './posts';
 
 export default function() {
 	var api = Router();
 
-	api.use('/posts', posts);
+  api.use('/auth', require('./auth'));
+	api.use('/posts', require('./posts'));
+  api.use('/users', require('./users'));
 
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {

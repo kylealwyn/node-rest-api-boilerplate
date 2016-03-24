@@ -1,9 +1,8 @@
 import { Router } from 'express';
 
 export default function() {
-	var routes = Router();
-
+	var router = Router();
 	// add middleware here
 
-	return routes;
+	return router;
 }

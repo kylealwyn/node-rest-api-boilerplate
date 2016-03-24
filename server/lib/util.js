@@ -8,7 +8,7 @@
  *			collection.find({}, toRes(res));
  *		}
  */
-export function toRes(res, status=200) {
+export function respond(res, status) {
 	return (err, thing) => {
 		if (err) return res.status(500).send(err);
 
