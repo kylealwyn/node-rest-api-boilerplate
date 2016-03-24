@@ -2,10 +2,13 @@ import { Router } from 'express';
 import Auth from '../lib/auth';
 import passport from 'passport';
 
+// BASE: /auth
 
 let router = Router();
 
-router.post('/local', (req, res, next) => {
+router.post('/local', loginWithEmail);
+
+function loginWithEmail(req, res, next) {
   passport.authenticate('local', (err, user, info) => {
     let  error = err || info;
 
@@ -15,11 +18,8 @@ router.post('/local', (req, res, next) => {
       return res.status(404).json({message: 'Something went wrong, please try again.'});
     }
 
-    let token = Auth.signToken(user._id, user.role);
-
-    res.status(200).json({ token: token });
-
+    res.status(200).json({ token: Auth.signToken(user._id, user.role) });
   })(req, res, next);
-});
+}
 
 module.exports = router;

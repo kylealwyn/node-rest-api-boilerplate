@@ -20,24 +20,21 @@ function isAuthenticated() {
     // Validate jwt
     .use(function(req, res, next) {
       // allow access_token to be passed through query parameter as well
-      if (req.query && req.query.hasOwnProperty('access_token')) {
-        req.headers.authorization = 'Bearer ' + req.query.access_token;
-      }
+      req.headers.authorization = `Bearer ${req.headers.authorization}`
       validateJwt(req, res, next);
     })
     // Attach user to request
     .use(function(req, res, next) {
-      User.findByIdAsync(req.user._id)
-        .then(function(user) {
-          if (!user) {
-            return res.status(401).end();
-          }
-          req.user = user;
-          next();
-        })
-        .catch(function(err) {
+      User.findById(req.user._id, function (err, user) {
+        if (err) {
           return next(err);
-        });
+        } else if (!user) {
+          return res.status(401).end();
+        }
+
+        req.user = user;
+        next();
+      });
     });
 }
 

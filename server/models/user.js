@@ -26,7 +26,9 @@ let UserSchema = new Schema({
   role: {
     type: String,
     default: 'user'
-  },
+  }
+}, {
+  timestamps: true
 });
 
 var validatePresenceOf = value => value && value.length;

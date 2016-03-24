@@ -1,5 +1,5 @@
 import passport from 'passport';
-import {Strategy as LocalStrategy} from 'passport-local';
+import { Strategy as LocalStrategy } from 'passport-local';
 
 function localAuthenticate(User, email, password, done) {
   User.findOne({email}, function (err, user) {
@@ -28,11 +28,11 @@ function localAuthenticate(User, email, password, done) {
   });
 }
 
-exports.setup = function(User, config) {
+exports.setup = (User, config) => {
   passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password' // this is the virtual field on the model
-  }, function(email, password, done) {
+  }, (email, password, done) => {
     return localAuthenticate(User, email, password, done);
   }));
 };

@@ -1,59 +1,72 @@
-import resource from 'resource-router-middleware';
 import _ from 'lodash';
+import Auth from '../lib/auth';
 import Post from '../models/post';
+import { Router } from 'express';
 
-export default resource({
+// BASE: /posts
 
-	/** Property name to store preloaded entity on `request`. */
-	id : 'post',
+let router = Router();
 
-	/** For requests with an `id`, you can auto-load the entity.
-	 *  Errors terminate the request, success sets `req[id] = data`.
-	 */
-	load(req, id, done) {
-		Post.findOne(id, (err, post) => done(err, post));
-	},
+router.post('/', Auth.isAuthenticated(), createPost);
 
-	/** GET / - List all entities */
-	index({ params }, res) {
-		Post.find({}, (err, posts) => {
-			res.json(posts);
-		});
-	},
+function createPost(req, res, next) {
+	Post.create(req.body, (err, post) => {
+		if (!err) {
+			res.json(post);
+		} else {
+			res.sendStatus(400);
+		}
+	});
+}
 
-	/** POST / - Create a new entity */
-	create({ body }, res) {
-		Post.create(body, (err, post) => {
-			if (!err)
-				res.send(post);
-			else
-				res.sendStatus(400);
-		});
-	},
+module.exports = router;
+// export default resource({
 
-	/** GET /:id - Return a given entity */
-	read({ params }, res) {
-		res.json(req.facet);
-	},
+// 	/** Property name to store preloaded entity on `request`. */
+// 	id : 'post',
 
-	/** PUT /:id - Update a given entity */
-	update({ post, body }, res) {
-		console.log(post);
-		post = _.assign(post, body);
-		console.log(post);
-		post.save(err => {
-			if (err) {
-				res.sendStatus(400);
-			} else {
-				res.sendStatus(204);
-			}
-		});
+// 	/** For requests with an `id`, you can auto-load the entity.
+// 	 *  Errors terminate the request, success sets `req[id] = data`.
+// 	 */
+// 	load(req, id, done) {
+// 		Post.findOne(id, (err, post) => done(err, post));
+// 	},
 
-	},
+// 	/** GET / - List all entities */
+// 	index({ params }, res) {
+// 		Post.find({}, (err, posts) => {
+// 			res.json(posts);
+// 		});
+// 	},
 
-	/** DELETE /:id - Delete a given entity */
-	delete({ facet }, res) {
-		posts.splice(posts.indexOf(facet), 1);
-		res.sendStatus(204);
-	}
-});
+// 	/** POST / - Create a new entity */
+// 	create({ body }, res) {
+
+// 	},
+
+// 	/** GET /:id - Return a given entity */
+// 	read({ params }, res) {
+// 		res.json(req.facet);
+// 	},
+
+// 	/** PUT /:id - Update a given entity */
+// 	update({ post, body }, res) {
+// 		console.log(post);
+// 		post = _.assign(post, body);
+// 		console.log(post);
+// 		post.save(err => {
+// 			if (err) {
+// 				res.sendStatus(400);
+// 			} else {
+// 				res.sendStatus(204);
+// 			}
+// 		});
+
+// 	},
+
+// 	/** DELETE /:id - Delete a given entity */
+// 	delete({ facet }, res) {
+// 		posts.splice(posts.indexOf(facet), 1);
+// 		res.sendStatus(204);
+// 	}
+// });
