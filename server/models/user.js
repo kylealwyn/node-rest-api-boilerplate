@@ -53,6 +53,14 @@ UserSchema
     };
   });
 
+UserSchema.set('toJSON', {
+    transform: function(doc, ret, options) {
+        delete ret.password;
+        delete ret.salt;
+        return ret;
+    }
+});
+
 // Validate empty password
 UserSchema
   .path('password')

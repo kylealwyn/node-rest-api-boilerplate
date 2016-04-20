@@ -18,21 +18,20 @@ var validateJwt = expressJwt({
 function isAuthenticated() {
   return compose()
     // Validate jwt
-    .use(function(req, res, next) {
-      // allow access_token to be passed through query parameter as well
+    .use((req, res, next) => {
       req.headers.authorization = `Bearer ${req.headers.authorization}`
       validateJwt(req, res, next);
     })
     // Attach user to request
-    .use(function(req, res, next) {
-      User.findById(req.user._id, function (err, user) {
+    .use((req, res, next) => {
+      User.findById(req.user._id, (err, user) => {
         if (err) {
           return next(err);
         } else if (!user) {
           return res.status(401).end();
         }
 
-        req.user = user;
+        req.currentUser = user;
         next();
       });
     });

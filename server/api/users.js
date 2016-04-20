@@ -2,8 +2,9 @@ import User from '../models/user';
 import { Router } from 'express';
 import config from '../config/environment';
 import jwt from 'jsonwebtoken';
-import auth from '../lib/auth';
+import { isAuthenticated } from '../lib/auth';
 import { respond } from '../lib/util';
+
 // BASE: /users
 
 let router = Router();
@@ -11,8 +12,15 @@ let router = Router();
 /**
  * List All Users
  */
-router.get('/', (req, res) => {
-  User.find({}, { password: 0, salt: 0 }, respond(res, 200));
+router.get('/', isAuthenticated(), (req, res) => {
+  User.find({}, respond(res, 200));
+});
+
+/**
+ * Get Personal Details
+ */
+router.get('/me', isAuthenticated(), (req, res) => {
+  res.status(200).json(req.currentUser);
 });
 
 /**
