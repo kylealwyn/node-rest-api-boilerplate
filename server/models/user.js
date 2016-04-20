@@ -1,17 +1,17 @@
 import mongoose from 'mongoose';
 import crypto from 'crypto';
-
+import Post from './post';
 let Schema = mongoose.Schema;
 let authTypes = ['github', 'twitter', 'facebook', 'google'];
 
 let UserSchema = new Schema({
+  firstname: String,
+  lastname: String,
   username: {
     type: String,
     unique: true,
     required: true
   },
-  firstname: String,
-  lastname: String,
   email: {
     type: String,
     unique: true,
@@ -33,32 +33,13 @@ let UserSchema = new Schema({
 
 var validatePresenceOf = value => value && value.length;
 
-// Public profile information
-UserSchema
-  .virtual('profile')
-  .get(function () {
-    return {
-      'name': this.name,
-      'role': this.role
-    };
-  });
-
-// Non-sensitive info we'll be putting in the token
-UserSchema
-  .virtual('token')
-  .get(function () {
-    return {
-      '_id': this._id,
-      'role': this.role
-    };
-  });
-
 UserSchema.set('toJSON', {
-    transform: function(doc, ret, options) {
-        delete ret.password;
-        delete ret.salt;
-        return ret;
-    }
+  virtuals: true,
+  transform: function(doc, ret, options) {
+      delete ret.password;
+      delete ret.salt;
+      return ret;
+  }
 });
 
 // Validate empty password
@@ -145,6 +126,11 @@ UserSchema
  * Methods
  */
 UserSchema.methods = {
+  getPosts(cb) {
+    Post.find({ _user: this }, (err, posts) => {
+      cb(err, posts)
+    });
+  },
   /**
    * Authenticate - check if the passwords are the same
    *

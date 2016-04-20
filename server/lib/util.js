@@ -10,7 +10,7 @@
  */
 export function respond(res, status) {
 	return (err, thing) => {
-		if (err) return res.status(500).send(err);
+		if (err) return res.status(400).send(err);
 
 		if (thing && typeof thing.toObject==='function') {
 			thing = thing.toObject();

@@ -1,7 +1,9 @@
 import User from '../models/user';
+import Post from '../models/post';
 import { Router } from 'express';
 import config from '../config/environment';
 import jwt from 'jsonwebtoken';
+import _ from 'lodash';
 import { isAuthenticated, signToken } from '../lib/auth';
 import { respond } from '../lib/util';
 
@@ -9,11 +11,36 @@ import { respond } from '../lib/util';
 
 let router = Router();
 
+function populate(req, res, next) {
+  console.log('Populating..');
+  User.findById(req.params.id, (err, user) => {
+    if (err) {
+      return res.status(400).send('Invalid ID.');
+    }
+    if (!user) {
+      return res.status(404).send('User does not exist.');
+    }
+
+    req.user = user;
+    next();
+  });
+}
+
 /**
  * List All Users
+ * TODO: Paginate
  */
 router.get('/', isAuthenticated(), (req, res) => {
-  User.find({}, respond(res, 200));
+  User.find({}, (err, users) => {
+    users.forEach(user => {
+      Post.find({ _user: user }, (err, posts) => {
+        console.log(posts);
+        user.posts = posts;
+        res.status(200).json(users);
+      });
+    });
+
+  })
 });
 
 /**
@@ -24,18 +51,33 @@ router.get('/me', isAuthenticated(), (req, res) => {
 });
 
 /**
- * Get User By Id
+ * Update User
  */
-router.get('/:id', (req, res) => {
-  res.send('whaaat')
+router.put('/me', isAuthenticated(), (req, res) => {
+  _.assign(req.currentUser, req.body);
+  req.currentUser.save((err, user) => {
+    if (err) {
+      return res.status(400).send(err);
+    }
+    res.sendStatus(204);
+  });
 });
 
 /**
  * Update User
  */
-router.put('/:id', (req, res) => {
-  res.send('whaaat')
-})
+router.delete('/me', isAuthenticated(), (req, res) => {
+  req.currentUser.remove((err) => {
+    res.sendStatus(204);
+  })
+});
+
+/**
+ * Get User By Id
+ */
+router.get('/:id', isAuthenticated(), populate, (req, res) => {
+  res.status(200).json(req.user);
+});
 
 /**
  * Create User
@@ -48,10 +90,6 @@ router.post('/', (req, res) => {
     if (err) {
       return res.status(400).json(err);
     }
-
-    let token = jwt.sign({ _id: user._id, role: user.role }, config.secrets.session, {
-      expiresIn: 1 // 60 * 60 * 24 * 30 // 1 Month
-    });
 
     res.json({ token: signToken(user._id, user.role) });
   });

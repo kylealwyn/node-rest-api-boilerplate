@@ -62,7 +62,6 @@ export function hasRole(roleRequired) {
  * Returns a jwt token signed by the app secret
  */
 export function signToken(_id, role) {
-  console.log('Signing log with secret ' + config.secrets.session);
   return jwt.sign({ _id, role }, config.secrets.session, {
     expiresIn: 60 * 60 * 24 * 7 // 1 week
   });
