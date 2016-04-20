@@ -1,15 +1,18 @@
 import passport from 'passport';
+import config from '../environment';
+import User from '../../models/user';
 import { Strategy as LocalStrategy } from 'passport-local';
 
-function localAuthenticate(User, email, password, done) {
-  User.findOne({email}, function (err, user) {
+
+function authenticate(username, password, done) {
+  User.findOne({ username }, (err, user) => {
     if (err) {
       return done(err);
     }
 
     if (!user) {
       return done(null, false, {
-        message: 'This email is not registered.'
+        message: 'This username is not registered.'
       });
     }
 
@@ -28,11 +31,9 @@ function localAuthenticate(User, email, password, done) {
   });
 }
 
-exports.setup = (User, config) => {
+module.exports = () => {
   passport.use(new LocalStrategy({
-    usernameField: 'email',
+    usernameField: 'username',
     passwordField: 'password' // this is the virtual field on the model
-  }, (email, password, done) => {
-    return localAuthenticate(User, email, password, done);
-  }));
+  }, (username, password, done) => authenticate(username, password, done)));
 };

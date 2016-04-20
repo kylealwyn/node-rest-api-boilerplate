@@ -29,22 +29,24 @@ export default function () {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  // Mount all middleware
+  // Mount our custom middleware
   app.use(middleware());
 
   // Setup Passport
   app.use(passport.initialize());
   strategies();
 
-  // Mount Routes
-  app.use('/', api());
+  // Mount API with api subpath
+  app.use('/api', api());
 
-  if ('development' == app.get('env')) {
+  if (app.get('env') === 'development') {
   	app.use(errorHandler());
   }
 
-  app.server.listen(process.env.PORT || 8000);
-  console.log(`Magic happening on port ${app.server.address().port}`);
-  return app;
+  app.server.listen(process.env.PORT || 8000, () => {
+    // Up and running!
+    console.log(`Magic happening on port ${app.server.address().port}`);
+  });
 
+  return app;
 }

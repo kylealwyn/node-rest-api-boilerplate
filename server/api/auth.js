@@ -6,9 +6,7 @@ import passport from 'passport';
 
 let router = Router();
 
-router.post('/local', loginWithEmail);
-
-function loginWithEmail(req, res, next) {
+router.post('/local', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     let  error = err || info;
 
@@ -20,6 +18,6 @@ function loginWithEmail(req, res, next) {
 
     res.status(200).json({ token: Auth.signToken(user._id, user.role) });
   })(req, res, next);
-}
+});
 
-module.exports = router;
+export default router;
