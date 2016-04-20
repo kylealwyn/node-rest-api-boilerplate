@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import Auth from '../lib/auth';
+import { signToken } from '../lib/auth';
 import passport from 'passport';
 
 // BASE: /auth
@@ -16,7 +16,7 @@ router.post('/local', (req, res, next) => {
       return res.status(404).json({message: 'Something went wrong, please try again.'});
     }
 
-    res.status(200).json({ token: Auth.signToken(user._id, user.role) });
+    res.status(200).json({ token: signToken(user._id, user.role) });
   })(req, res, next);
 });
 

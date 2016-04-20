@@ -2,7 +2,7 @@ import User from '../models/user';
 import { Router } from 'express';
 import config from '../config/environment';
 import jwt from 'jsonwebtoken';
-import { isAuthenticated } from '../lib/auth';
+import { isAuthenticated, signToken } from '../lib/auth';
 import { respond } from '../lib/util';
 
 // BASE: /users
@@ -44,16 +44,17 @@ router.post('/', (req, res) => {
   let newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
-  newUser.save(function (err, user) {
+  newUser.save((err, user) => {
     if (err) {
       return res.status(400).json(err);
     }
 
-    let token = jwt.sign({ _id: user._id }, config.secrets.session, {
-      expiresIn: 60 * 60 * 24 * 7 // 1 week
+    let token = jwt.sign({ _id: user._id, role: user.role }, config.secrets.session, {
+      expiresIn: 1 // 60 * 60 * 24 * 30 // 1 Month
     });
 
-    res.json({ token });
+    res.json({ token: signToken(user._id, user.role) });
   });
 });
-module.exports = router;
+
+export default router;
