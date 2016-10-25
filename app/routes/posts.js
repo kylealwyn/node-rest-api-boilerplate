@@ -3,10 +3,8 @@ import { isAuthenticated } from '../lib/auth';
 import { respond } from '../lib/util';
 import Post from '../models/post';
 
-
 // BASE: /posts
-
-let router = Router();
+const router = new Router();
 
 /**
  * Get All Posts
@@ -23,7 +21,7 @@ let router = Router();
  * Create Post
  */
 router.post('/', isAuthenticated(), (req, res, next) => {
-  let post = new Post(req.body);
+  const post = new Post(req.body);
   post._user = req.currentUser.id;
   post.save(respond(res, 201));
 });

@@ -22,7 +22,7 @@ export default function () {
   // Logger
   app.use(morgan('dev'));
 
-  // Add more routes to HTTP
+  // Add all HTTP methods
   app.use(methodOverride());
 
   // Decode JSON

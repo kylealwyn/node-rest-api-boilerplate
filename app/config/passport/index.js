@@ -1,7 +1,5 @@
-'use strict';
+import localStrategy from './local';
 
-module.exports = () => {
-  require('./local')();
+export {
+  localStrategy
 }
-
-
