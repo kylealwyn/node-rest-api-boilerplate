@@ -1,5 +1,5 @@
 {
-  "name": "express-es6-rest-api",
+  "name": "node-api-es6-boilerplate",
   "version": "0.2.2",
   "description": "Starter project for an ES6 RESTful Express API",
   "main": "index.js",
@@ -9,31 +9,36 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/developit/express-es6-rest-api.git"
+    "url": "git://github.com/kylealwyn/node-api-es6-boilerplate.git"
   },
-  "author": "Jason Miller <jason@developit.ca>",
+  "author": "Kyle Alwyn <kjalwyn@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "babel": "^5.8.21",
-    "body-parser": "^1.13.3",
-    "composable-middleware": "^0.3.0",
-    "compression": "^1.5.2",
-    "cors": "^2.7.1",
-    "errorhandler": "^1.4.3",
-    "express": "^4.13.3",
-    "express-jwt": "^3.3.0",
-    "jsonwebtoken": "^5.7.0",
-    "lodash": "^4.6.1",
-    "method-override": "^2.3.5",
-    "mongoose": "^4.4.7",
-    "morgan": "^1.7.0",
-    "multer": "^1.1.0",
-    "passport": "^0.3.2",
-    "passport-local": "^1.0.0",
-    "resource-router-middleware": "^0.5.1"
-  },
   "bugs": {
-    "url": "https://github.com/developit/express-es6-rest-api/issues"
+    "url": "https://github.com/kylealwyn/node-api-es6-boilerplate/issues"
   },
-  "homepage": "https://github.com/developit/express-es6-rest-api#readme"
+  "homepage": "https://github.com/kylealwyn/node-api-es6-boilerplate#readme",
+  "dependencies": {
+    "babel-core": "^6.18.0",
+    "babel-eslint": "^7.0.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-register": "^6.18.0",
+    "body-parser": "^1.15.2",
+    "composable-middleware": "^0.3.0",
+    "compression": "^1.6.2",
+    "cors": "^2.8.1",
+    "errorhandler": "^1.4.3",
+    "eslint": "^3.8.1",
+    "eslint-plugin-babel": "^3.3.0",
+    "express": "^4.14.0",
+    "express-jwt": "^3.4.0",
+    "jsonwebtoken": "^5.7.0",
+    "lodash": "^4.16.4",
+    "method-override": "^2.3.6",
+    "mongoose": "^4.6.5",
+    "morgan": "^1.7.0",
+    "multer": "^1.2.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {}
 }

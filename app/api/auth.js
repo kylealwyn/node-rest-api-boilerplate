@@ -4,8 +4,12 @@ import passport from 'passport';
 
 // BASE: /auth
 
-let router = Router();
+let router = new Router();
 
+/**
+ * Login with email
+ *
+ */
 router.post('/local', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     let  error = err || info;
