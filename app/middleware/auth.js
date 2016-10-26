@@ -50,12 +50,3 @@ export function hasRole(roleRequired) {
       }
     });
 }
-
-/**
- * Returns a jwt token signed by the app secret
- */
-export function signToken(_id) {
-  return jwt.sign({ _id }, Constants.secrets.session, {
-    expiresIn: Constants.sessionExpiry
-  });
-}

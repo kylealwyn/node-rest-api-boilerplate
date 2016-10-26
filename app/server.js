@@ -36,7 +36,7 @@ export default function () {
   passport.use(localStrategy);
 
   // Mount API with api subpath
-  app.use('/api', routes);
+  app.use('/', routes);
 
   if (app.get('env') === 'development') {
     app.use(errorHandler());
