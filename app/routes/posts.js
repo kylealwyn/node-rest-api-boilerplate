@@ -1,31 +1,35 @@
 import { Router } from 'express';
-import { isAuthenticated } from '../lib/auth';
-import { respond } from '../lib/util';
+import { authenticate } from '../middleware/auth';
+import { respondWithThing } from '../lib/util';
 import Post from '../models/post';
 
 // BASE: /posts
-const router = new Router();
+const postRoute = new Router();
 
 /**
  * Get All Posts
  * TODO: Paginate this list and only find posts within 5 miles of request
  */
- router.get('/', isAuthenticated(), (req, res, next) => {
+postRoute.get('/', authenticate, (req, res) => {
   Post
     .find({})
-    .populate('_user')
-    .exec(respond(res, 200));
- })
+    .populate({ path: '_user', select: 'name' })
+    .exec(respondWithThing(res, 200));
+})
 
 /**
  * Create Post
  */
-router.post('/', isAuthenticated(), (req, res, next) => {
+postRoute.post('/', authenticate, (req, res) => {
   const post = new Post(req.body);
-  post._user = req.currentUser.id;
-  post.save(respond(res, 201));
+  post._user = req.currentUser._id;
+  post.save()
+    .then(() => {
+      res.sendStatus(201)
+    })
+    .catch(err => {
+      res.status(400).send(err)
+    });
 });
 
-
-
-export default router;
+export default postRoute;

@@ -1,8 +1,6 @@
-import { Router } from 'express';
-
-export default function() {
-	var router = Router();
-	// add middleware here
-
-	return router;
+/**
+ * Sample middleware
+ */
+export default function(req, res, next) {
+  next();
 }

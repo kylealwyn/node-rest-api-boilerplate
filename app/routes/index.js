@@ -3,17 +3,22 @@ import auth from './auth';
 import posts from './posts';
 import users from './users';
 
-const router = new Router();
+// Base: /api
+const baseRoute = new Router();
 
-router.use('/auth', auth);
-router.use('/posts', posts);
-router.use('/users', users);
-
-// perhaps expose some API metadata at the root
-router.get('/', (req, res) => {
+/**
+ * Expose API Metadata at root
+ */
+baseRoute.get('/', (req, res) => {
 	res.json({
 		version : '1.0'
 	});
 });
 
-export default router;
+baseRoute.use('/auth', auth);
+baseRoute.use('/posts', posts);
+baseRoute.use('/users', users);
+
+
+
+export default baseRoute;

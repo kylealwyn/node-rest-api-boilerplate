@@ -29,8 +29,9 @@ const defaultConfig = {
   port: process.env.PORT || 9000,
   ip: process.env.IP || '0.0.0.0',
   seedDB: false,
+  sessionExpiry: 60 * 60 * 24 * 7, // 1 week,
   secrets: {
-    session: 'angular-fullstack-secret'
+    session: 'i-am-the-secret-key' // This should be loaded in via the environment in production
   },
   userRoles: ['guest', 'user', 'admin'],
   mongo: {

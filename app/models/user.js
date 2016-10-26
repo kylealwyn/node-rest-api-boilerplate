@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 import Post from './post';
-let Schema = mongoose.Schema;
-let authTypes = ['github', 'twitter', 'facebook', 'google'];
+const Schema = mongoose.Schema;
+const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
-let UserSchema = new Schema({
+const UserSchema = new Schema({
   firstname: String,
   lastname: String,
   username: {
@@ -26,7 +26,8 @@ let UserSchema = new Schema({
   role: {
     type: String,
     default: 'user'
-  }
+  },
+  posts: [ {type : mongoose.Schema.ObjectId, ref : 'Post'} ]
 }, {
   timestamps: true
 });
@@ -35,10 +36,10 @@ var validatePresenceOf = value => value && value.length;
 
 UserSchema.set('toJSON', {
   virtuals: true,
-  transform: function(doc, ret, options) {
-      delete ret.password;
-      delete ret.salt;
-      return ret;
+  transform(doc, obj, options) {
+    delete obj.password;
+    delete obj.salt;
+    return obj;
   }
 });
 
@@ -76,13 +77,8 @@ UserSchema
 // Validate email is not taken
 UserSchema
   .path('username')
-  .validate(function(username, respond) {
-    var self = this;
+  .validate(function (username, respond) {
     this.constructor.findOne({username}, (err, user) => {
-      if (err) {
-        throw err;
-      }
-
       if (user) {
         if (this.id === user.id) {
           return respond(true);
@@ -90,7 +86,7 @@ UserSchema
         return respond(false);
       }
 
-      return respond(true);
+      return respond(false);
     });
   }, 'This username is already in use.');
 
@@ -126,11 +122,10 @@ UserSchema
  * Methods
  */
 UserSchema.methods = {
-  getPosts(cb) {
-    Post.find({ _user: this }, (err, posts) => {
-      cb(err, posts)
-    });
+  getPosts() {
+    return Post.find({ _user: this._id }).exec();
   },
+
   /**
    * Authenticate - check if the passwords are the same
    *
@@ -225,4 +220,4 @@ UserSchema.methods = {
   }
 };
 
-module.exports = mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema);

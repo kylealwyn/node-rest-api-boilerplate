@@ -1,4 +1,3 @@
-import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -6,47 +5,45 @@ import methodOverride from 'method-override';
 import errorHandler from 'errorhandler';
 import morgan from 'morgan';
 import passport from 'passport';
+import helmet from 'helmet';
 
-import strategies from './passport';
-import middleware from '../middleware';
-import api from '../api';
+import {localStrategy} from './config/passport';
+import middleware from './middleware';
+import routes from './routes';
 
 export default function () {
-  var app = express();
+  let app = express();
 
-  // Create HTTP Server
-  app.server = http.createServer(app);
-
+  // Adds some security best practices
+  app.use(helmet());
   app.use(cors({ exposedHeaders: ['Link'] }));
 
   // Logger
   app.use(morgan('dev'));
 
-  // Add all HTTP methods
-  app.use(methodOverride());
-
-  // Decode JSON
+  // Properly Decode JSON
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  // Mount our custom middleware
-  app.use(middleware());
+  // Add all HTTP methods
+  app.use(methodOverride());
 
-  // Setup Passport
+  // Mount custom middleware
+  app.use(middleware);
+
+  // Setup Passport Authentication
   app.use(passport.initialize());
-  strategies();
+  passport.use(localStrategy);
 
   // Mount API with api subpath
-  app.use('/api', api());
+  app.use('/api', routes);
 
   if (app.get('env') === 'development') {
-  	app.use(errorHandler());
+    app.use(errorHandler());
   }
 
-  app.server.listen(process.env.PORT || 8000, () => {
+  app.listen(process.env.PORT || 4444, () => {
     // Up and running!
-    console.log(`Magic happening on port ${app.server.address().port}`);
+    console.log(`we live fam.`);
   });
-
-  return app;
 }

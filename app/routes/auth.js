@@ -1,27 +1,45 @@
 import { Router } from 'express';
-import { signToken } from '../lib/auth';
 import passport from 'passport';
+import { signToken } from '../middleware/auth';
+import User from '../models/user';
+
 
 // BASE: /auth
-
-let router = new Router();
+const authRoute = new Router();
 
 /**
  * Login with email
- *
  */
-router.post('/local', (req, res, next) => {
+authRoute.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
-    let  error = err || info;
+    const error = err || info;
 
     if (error) {
       return res.status(401).json(error);
     } else if (!user) {
-      return res.status(404).json({message: 'Something went wrong, please try again.'});
+      return res.status(404).json({ message: 'Please verify you are using the correct credentials.' });
     }
 
-    res.status(200).json({ token: signToken(user._id, user.role) });
+    const token = signToken(user._id, user.role);
+    res.json({ token });
   })(req, res, next);
 });
 
-export default router;
+/**
+ * Create User
+ */
+authRoute.post('/register', (req, res) => {
+  const newUser = new User(req.body);
+  newUser.provider = 'local';
+  newUser.role = 'user';
+  newUser.save((err, user) => {
+    if (err) {
+      return res.status(400).json(err);
+    }
+
+    const token = signToken(user._id);
+    res.json({ token });
+  });
+});
+
+export default authRoute;

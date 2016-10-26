@@ -8,13 +8,26 @@
  *			collection.find({}, toRes(res));
  *		}
  */
-export function respond(res, status) {
+export function respondWithThing(res, status) {
 	return (err, thing) => {
-		if (err) return res.status(400).send(err);
+		if (err) {
+			return res.status(400).send(err);
+		}
 
 		if (thing && typeof thing.toObject==='function') {
 			thing = thing.toObject();
 		}
+
 		res.status(status).json(thing);
+	};
+}
+
+export function respondWithStatus(res, status) {
+	return (err) => {
+		if (err) {
+			return res.status(400).send(err);
+		}
+
+		res.sendStatus(status);
 	};
 }

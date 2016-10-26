@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-let Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-let PostSchema = new Schema({
+const PostSchema = new Schema({
   text: {
     type: String,
     required: true
