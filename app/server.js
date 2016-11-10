@@ -12,7 +12,7 @@ import middleware from './middleware';
 import routes from './routes';
 
 export default function () {
-  let app = express();
+  const app = express();
 
   // Adds some security best practices
   app.use(helmet());
