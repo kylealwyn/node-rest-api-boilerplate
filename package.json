@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --reporter spec --compilers js:babel-register tests/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -42,7 +42,10 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.0.0",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
     "eslint": "^3.8.1",
-    "eslint-plugin-babel": "^3.3.0"
+    "eslint-plugin-babel": "^3.3.0",
+    "mocha": "^3.1.2"
   }
 }
