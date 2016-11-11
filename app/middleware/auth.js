@@ -11,21 +11,21 @@ export function authenticate(req, res, next) {
   const {authorization} = req.headers;
   jwt.verify(authorization, Constants.secrets.session, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ success: false, message: 'Failed to authenticate token.' });
-    } else {
-      // if everything is good, save to request for use in other routes
-      User
-        .findById(decoded._id)
-        .exec()
-        .then((user) => {
-          req.currentUser = user
-          next();
-        })
-        .catch((err) => {
-          // console.log(err);
-          return next(err);
-        });
+      return res.sendStatus(401);
     }
+
+    // If token is decoded successfully, find user and attach to our request
+    // for use in our route or other middleware
+    User
+      .findById(decoded._id)
+      .then((user) => {
+        if (!user) {
+          return res.sendStatus(401);
+        }
+        req.currentUser = user
+        next();
+      })
+      .catch((err) => next(err));
   });
 }
 

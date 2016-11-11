@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 import constants from './config/constants';
 
-export default (callback) => {
-  mongoose.Promise = global.Promise;
-  mongoose.connect(constants.mongo.uri);
-  mongoose.connection.on('error', (err) => console.log(err));
-  mongoose.connection.on('open', callback);
-}
+// Use native promises
+mongoose.Promise = global.Promise;
+
+// Connect to our mongo database;
+mongoose.connect(constants.mongo.uri);
+mongoose.connection.on('error', (err) => { throw err; });

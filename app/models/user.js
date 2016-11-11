@@ -15,12 +15,16 @@ const UserSchema = new Schema({
   email: {
     type: String,
     unique: true,
-    required: true,
-    lowercase: true
+    lowercase: true,
+    required: [true, 'Email is required'],
+    validator(email) {
+      const emailRegex = /^[-a-z0-9%S_+]+(\.[-a-z0-9%S_+]+)*@(?:[a-z0-9-]{1,63}\.){1,125}[a-z]{2,63}$/i;
+      return emailRegex.test(email);
+    }
   },
   password: {
     type: String,
-    required: true
+    required: [true, 'Password is required.']
   },
   salt: String,
   role: {
@@ -32,87 +36,53 @@ const UserSchema = new Schema({
   timestamps: true
 });
 
-var validatePresenceOf = value => value && value.length;
-
 UserSchema.set('toJSON', {
   virtuals: true,
-  transform(doc, obj, options) {
+  transform(doc, obj) {
     delete obj.password;
     delete obj.salt;
     return obj;
   }
 });
 
-// Validate empty password
-UserSchema
-  .path('password')
-  .validate(function(password) {
-    if (~authTypes.indexOf(this.provider)) {
-      return true;
-    }
-    return password.length;
-  }, 'Password cannot be blank');
-
 // Validate email is not taken
 UserSchema
   .path('email')
   .validate(function(email, respond) {
-    var self = this;
-    this.constructor.findOne({email}, (err, user) => {
-      if (err) {
-        throw err;
-      }
+    this.constructor
+      .findOne({email})
+      .then(user => { respond(user ? false : true) })
+      .catch(() => { respond(false) });
+  }, 'Email already in use.');
 
-      if (user) {
-        if (this.id === user.id) {
-          return respond(true);
-        }
-        return respond(false);
-      }
-
-      return respond(true);
-    });
-  }, 'The specified email address is already in use.');
-
-// Validate email is not taken
+// Validate username is not taken
 UserSchema
   .path('username')
   .validate(function (username, respond) {
-    this.constructor.findOne({username}, (err, user) => {
-      if (user) {
-        if (this.id === user.id) {
-          return respond(true);
-        }
-        return respond(false);
-      }
+    this.constructor
+      .findOne({username})
+      .then(user => { respond(user ? false : true) })
+      .catch(() => { respond(false) });
+  }, 'Username already taken.');
 
-      return respond(false);
-    });
-  }, 'This username is already in use.');
-
+// Validate empty password
 UserSchema
-  .pre('save', function(next) {
+  .path('password')
+  .validate(function (password) {
+    if (~authTypes.indexOf(this.provider)) {
+      return true;
+    }
+    return password.length >= 6 && password.match(/\d+/g);
+  }, 'Password be at least 6 characters long and contain 1 number.');
+
+// Re-encrypt password before saving the document
+UserSchema
+  .pre('save', function (next) {
     // Handle new/update passwords
     if (this.isModified('password')) {
-      if (!validatePresenceOf(this.password) && ~authTypes.indexOf(this.provider) === -1) {
-        next(new Error('Invalid password'));
-      }
-
-      // Make salt with a callback
-      var _this = this;
-      this.makeSalt(function(saltErr, salt) {
-        if (saltErr) {
-          next(saltErr);
-        }
-        _this.salt = salt;
-        _this.encryptPassword(_this.password, function(encryptErr, hashedPassword) {
-          if (encryptErr) {
-            next(encryptErr);
-          }
-          _this.password = hashedPassword;
-          next();
-        });
-      });
+      this.salt = this.makeSalt();
+      this.password = this.encryptPassword(this.password)
+      next();
     } else {
       next();
     }
@@ -123,7 +93,7 @@ UserSchema
  */
 UserSchema.methods = {
   getPosts() {
-    return Post.find({ _user: this._id }).exec();
+    return Post.find({ _user: this._id });
   },
 
   /**
@@ -134,89 +104,36 @@ UserSchema.methods = {
    * @return {Boolean}
    * @api public
    */
-  authenticate: function(password, callback) {
-    if (!callback) {
-      return this.password === this.encryptPassword(password);
-    }
-
-    var _this = this;
-    this.encryptPassword(password, function(err, pwdGen) {
-      if (err) {
-        callback(err);
-      }
-
-      if (_this.password === pwdGen) {
-        callback(null, true);
-      }
-      else {
-        callback(null, false);
-      }
-    });
+  verifyPassword(password) {
+    return this.password === this.encryptPassword(password);
   },
 
   /**
    * Make salt
    *
    * @param {Number} byteSize Optional salt byte size, default to 16
-   * @param {Function} callback
    * @return {String}
-   * @api public
    */
-  makeSalt: function(byteSize, callback) {
-    var defaultByteSize = 16;
-
-    if (typeof arguments[0] === 'function') {
-      callback = arguments[0];
-      byteSize = defaultByteSize;
-    }
-    else if (typeof arguments[1] === 'function') {
-      callback = arguments[1];
-    }
-
-    if (!byteSize) {
-      byteSize = defaultByteSize;
-    }
-
-    if (!callback) {
-      return crypto.randomBytes(byteSize).toString('base64');
-    }
-
-    return crypto.randomBytes(byteSize, function(err, salt) {
-      if (err) {
-        callback(err);
-      }
-      return callback(null, salt.toString('base64'));
-    });
+  makeSalt(byteSize=16) {
+    return crypto.randomBytes(byteSize).toString('base64');
   },
 
   /**
    * Encrypt password
    *
    * @param {String} password
-   * @param {Function} callback
    * @return {String}
-   * @api public
    */
-  encryptPassword: function(password, callback) {
+  encryptPassword(password) {
     if (!password || !this.salt) {
       return null;
     }
 
-    var defaultIterations = 10000;
-    var defaultKeyLength = 64;
-    var salt = new Buffer(this.salt, 'base64');
+    const defaultIterations = 10000;
+    const defaultKeyLength = 64;
+    const salt = new Buffer(this.salt, 'base64');
 
-    if (!callback) {
-      return crypto.pbkdf2Sync(password, salt, defaultIterations, defaultKeyLength)
-                   .toString('base64');
-    }
-
-    return crypto.pbkdf2(password, salt, defaultIterations, defaultKeyLength, function(err, key) {
-      if (err) {
-        callback(err);
-      }
-      return callback(null, key.toString('base64'));
-    });
+    return crypto.pbkdf2Sync(password, salt, defaultIterations, defaultKeyLength).toString('base64');
   }
 };
 

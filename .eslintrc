@@ -16,5 +16,9 @@
   },
   "plugins": [
     "babel"
-  ]
+  ],
+  "globals": {
+    "it": true,
+    "describe": true
+  }
 }
