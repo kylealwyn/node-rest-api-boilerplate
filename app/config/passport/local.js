@@ -1,32 +1,17 @@
-import UserModel from '../../models/user';
+import Users from '../../models/user';
 import { Strategy as LocalStrategy } from 'passport-local';
 
-
 function authenticate(username, password, next) {
-  UserModel.findOne({ username }, (err, user) => {
-    if (err) {
-      return next(err);
-    }
-
-    if (!user) {
-      return next(null, false, {
-        message: 'This username is not registered.'
-      });
-    }
-
-    user.authenticate(password, function(authError, authenticated) {
-      if (authError) {
-        return next(authError);
+  Users
+    .findOne({ username })
+    .then(user => {
+      if (!user) {
+        return next({ message: 'This username is not registered.' });
       }
-      if (!authenticated) {
-        return next(null, false, {
-          message: 'This password is not correct.'
-        });
-      } else {
-        return next(null, user);
-      }
-    });
-  });
+
+      return user.verifyPassword(password) ? next(null, user) : next({message: 'Please verify your credentials.'});
+    })
+    .catch(err => { next(err) });
 }
 
 export default new LocalStrategy({
