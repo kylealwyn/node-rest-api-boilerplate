@@ -13,8 +13,6 @@ const environmentSpecificConfig = {
     }
   },
   production: {
-    ip: process.env.IP || undefined,
-    port: process.env.PORT || 8080,
     mongo: {
       uri: ''
     }
@@ -25,8 +23,17 @@ const environmentSpecificConfig = {
 // ============================================
 const defaultConfig = {
   env: process.env.NODE_ENV,
+  get envs() {
+    return {
+      test: process.env.NODE_ENV === 'test',
+      development: process.env.NODE_ENV === 'development',
+      production: process.env.NODE_ENV === 'production',
+    }
+  },
+
+  version: '1.0.0',
   root: path.normalize(__dirname + '/../../..'),
-  port: process.env.PORT || 9000,
+  port: process.env.PORT || 4567,
   ip: process.env.IP || '0.0.0.0',
   seedDB: false,
   sessionExpiry: 60 * 60 * 24 * 7, // 1 week,
