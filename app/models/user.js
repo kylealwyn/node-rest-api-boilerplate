@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 import Post from './post';
-const Schema = mongoose.Schema;
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
+const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   firstname: String,
   lastname: String,
@@ -26,31 +26,28 @@ const UserSchema = new Schema({
     type: String,
     required: [true, 'Password is required.']
   },
-  salt: String,
   role: {
     type: String,
     default: 'user'
-  },
-  posts: [ {type : mongoose.Schema.ObjectId, ref : 'Post'} ]
+  }
 }, {
   timestamps: true
 });
 
+// Strip out password field when sending user object to client
 UserSchema.set('toJSON', {
   virtuals: true,
   transform(doc, obj) {
     delete obj.password;
-    delete obj.salt;
     return obj;
   }
 });
 
-// Validate email is not taken
+// Ensure email has not been taken
 UserSchema
   .path('email')
   .validate(function(email, respond) {
-    this.constructor
-      .findOne({email})
+    this.constructor.findOne({email})
       .then(user => { respond(user ? false : true) })
       .catch(() => { respond(false) });
   }, 'Email already in use.');
@@ -59,37 +56,35 @@ UserSchema
 UserSchema
   .path('username')
   .validate(function (username, respond) {
-    this.constructor
-      .findOne({username})
+    this.constructor.findOne({username})
       .then(user => { respond(user ? false : true) })
       .catch(() => { respond(false) });
   }, 'Username already taken.');
 
-// Validate empty password
+// Validate password field
 UserSchema
   .path('password')
   .validate(function (password) {
     if (~authTypes.indexOf(this.provider)) {
       return true;
     }
+
     return password.length >= 6 && password.match(/\d+/g);
   }, 'Password be at least 6 characters long and contain 1 number.');
 
-// Re-encrypt password before saving the document
+//
 UserSchema
-  .pre('save', function (next) {
-    // Handle new/update passwords
+  .pre('save', function (save) {
+    // We must encrypt password before saving the document
     if (this.isModified('password')) {
-      this.salt = this.makeSalt();
-      this.password = this.encryptPassword(this.password)
-      next();
-    } else {
-      next();
+      this.password = this._hashPassword(this.password)
     }
+
+    save();
   });
 
 /**
- * Methods
+ * User Methods
  */
 UserSchema.methods = {
   getPosts() {
@@ -99,41 +94,22 @@ UserSchema.methods = {
   /**
    * Authenticate - check if the passwords are the same
    *
-   * @param {String} password
-   * @param {Function} callback
-   * @return {Boolean}
    * @api public
-   */
-  verifyPassword(password) {
-    return this.password === this.encryptPassword(password);
-  },
-
-  /**
-   * Make salt
-   *
-   * @param {Number} byteSize Optional salt byte size, default to 16
-   * @return {String}
-   */
-  makeSalt(byteSize=16) {
-    return crypto.randomBytes(byteSize).toString('base64');
-  },
-
-  /**
-   * Encrypt password
-   *
    * @param {String} password
-   * @return {String}
+   * @return {Boolean} passwords match
    */
-  encryptPassword(password) {
-    if (!password || !this.salt) {
-      return null;
-    }
+  authenticate(password) {
+    return bcrypt.compareSync(password, this.password);
+  },
 
-    const defaultIterations = 10000;
-    const defaultKeyLength = 64;
-    const salt = new Buffer(this.salt, 'base64');
-
-    return crypto.pbkdf2Sync(password, salt, defaultIterations, defaultKeyLength).toString('base64');
+  /**
+   * Create password hash
+   * @api private
+   * @param {String} password
+   * @return {Boolean} passwords match
+   */
+  _hashPassword(password, byteSize = 12) {
+    return bcrypt.hashSync(password, byteSize)
   }
 };
 
