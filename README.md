@@ -3,11 +3,23 @@
 
 [![bitHound Score](https://www.bithound.io/github/kylealwyn/node-api-es6-boilerplate/badges/score.svg)](https://www.bithound.io/github/kylealwyn/node-api-es6-boilerplate)
 
-This is a straightforward boilerplate for building REST APIs with ES6 and Express.
+## Features
+- [x] ES6 for javascript awesomeness
+- [x] Mongoose & MongoDB for data layer
+- [x] Email authentication via Passport
+- [x] Testing via Mocha & Chai
+- [x] Test coverage via Isparta
 
-- ES6 support via [babel](https://babeljs.io)
-- CORS support via [cors](https://github.com/troygoode/node-cors)
-- Body Parsing via [body-parser](https://github.com/expressjs/body-parser)
+## Commands
+
+- `npm start`
+  - Start live-reloading development server
+
+- `npm test`
+  - Run test suite
+
+- `npm run coverage`
+  - Run test coverage
 
 ## Getting Started
 
