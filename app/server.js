@@ -16,7 +16,7 @@ let app = express();
 
 // Adds some security best practices
 app.use(helmet());
-app.use(cors({ exposedHeaders: ['Link'] }));
+app.use(cors());
 
 // Logger
 if (!constants.envs.test) {
