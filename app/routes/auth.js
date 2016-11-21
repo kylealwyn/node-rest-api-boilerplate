@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import passport from 'passport';
-import jwt from 'jsonwebtoken';
 import User from '../models/user';
-import Constants from '../config/constants';
 
 // BASE: /auth
 const authRoute = new Router();

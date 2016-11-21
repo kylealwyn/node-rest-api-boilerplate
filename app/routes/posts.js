@@ -8,7 +8,6 @@ const postRoute = new Router();
 
 /**
  * Get All Posts
- * TODO: Paginate this list and only find posts within 5 miles of request
  */
 postRoute.get('/', authenticate, (req, res) => {
   Post
