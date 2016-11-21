@@ -4,10 +4,9 @@ import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import errorHandler from 'errorhandler';
 import morgan from 'morgan';
-import passport from 'passport';
 import helmet from 'helmet';
 
-import {localStrategy} from './config/passport';
+import initializePassport from './config/passport';
 import routes from './routes';
 import constants from './config/constants';
 import './database';
@@ -31,8 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
 
 // Setup Passport Authentication
-app.use(passport.initialize());
-passport.use(localStrategy);
+app.use(initializePassport());
 
 // Mount API routes
 app.use('/', routes);
