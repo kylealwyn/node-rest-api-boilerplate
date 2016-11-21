@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "NODE_ENV=test mocha --reporter spec --compilers js:babel-register tests/**/*.js"
+    "test": "NODE_ENV=test mocha --reporter spec --compilers js:babel-register tests/**/*.js",
+    "test:watch": "npm test -- --watch",
+    "coverage": "NODE_ENV=test babel-node ./node_modules/.bin/isparta cover _mocha -- --reporter spec --compilers js:babel-register tests/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -47,11 +49,13 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "babel-eslint": "^7.0.0",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "eslint": "^3.8.1",
     "eslint-plugin-babel": "^3.3.0",
+    "isparta": "^4.0.0",
     "mocha": "^3.1.2",
     "nodemon": "^1.11.0"
   }

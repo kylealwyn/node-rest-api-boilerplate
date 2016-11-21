@@ -8,16 +8,6 @@ import Constants from '../config/constants';
 const authRoute = new Router();
 
 /**
- * Returns a jwt token signed by the app secret
- */
-const signToken = (_id) => {
-  return jwt.sign({ _id }, Constants.secrets.session, {
-    expiresIn: Constants.sessionExpiry
-  });
-}
-
-
-/**
  * Login with email
  */
 authRoute.post('/login', (req, res, next) => {
@@ -30,7 +20,7 @@ authRoute.post('/login', (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Please verify you are using the correct credentials.' });
     }
 
-    const token = signToken(user._id, user.role);
+    const token = user.generateToken();
     res.json({ token });
   })(req, res, next);
 });
@@ -47,7 +37,7 @@ authRoute.post('/register/email', (req, res) => {
       return res.status(400).json(err);
     }
 
-    const token = signToken(user._id);
+    const token = user.generateToken();
     res.json({ token });
   });
 });
