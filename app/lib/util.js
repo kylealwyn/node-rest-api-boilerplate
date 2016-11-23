@@ -1,5 +1,3 @@
-// Export the config object based on the NODE_ENV
-// ==============================================
 /**
  * Simple is object check.
  * @param item
