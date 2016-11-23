@@ -8,6 +8,7 @@ const environmentSpecificConfig = {
     seedDB: true
   },
   test: {
+    port: 5678,
     mongo: {
       uri: 'mongodb://localhost/test'
     }

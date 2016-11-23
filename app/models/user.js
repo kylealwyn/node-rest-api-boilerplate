@@ -43,6 +43,9 @@ const UserSchema = new Schema({
 UserSchema.set('toJSON', {
   virtuals: true,
   transform(doc, obj) {
+    obj.id = obj._id;
+    delete obj._id;
+    delete obj.__v;
     delete obj.password;
     return obj;
   }
@@ -98,8 +101,7 @@ UserSchema.methods = {
 
   /**
    * Authenticate - check if the passwords are the same
-   *
-   * @api public
+   * @public
    * @param {String} password
    * @return {Boolean} passwords match
    */
@@ -107,6 +109,11 @@ UserSchema.methods = {
     return bcrypt.compareSync(password, this.password);
   },
 
+  /**
+   * Generates a JSON Web token used for route authentication
+   * @public
+   * @return {String} signed JSON web token
+   */
   generateToken() {
     return jwt.sign({ _id: this._id }, Constants.secrets.session, {
       expiresIn: Constants.sessionExpiry
@@ -115,7 +122,7 @@ UserSchema.methods = {
 
   /**
    * Create password hash
-   * @api private
+   * @private
    * @param {String} password
    * @return {Boolean} passwords match
    */

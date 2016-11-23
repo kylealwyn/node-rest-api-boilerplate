@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "NODE_ENV=test mocha --reporter spec --compilers js:babel-register tests/**/*.js",
-    "test:watch": "npm test -- --watch",
-    "coverage": "NODE_ENV=test babel-node ./node_modules/.bin/isparta cover _mocha -- --reporter spec --compilers js:babel-register tests/**/*.js"
+    "test": "NODE_ENV=test mocha --recursive --reporter spec --compilers js:babel-register tests",
+    "test:watch": "nodemon --exec 'npm run test' tests",
+    "coverage": "NODE_ENV=test babel-node ./node_modules/.bin/isparta cover _mocha -- --recursive --reporter spec --compilers js:babel-register tests"
   },
   "repository": {
     "type": "git",
@@ -55,8 +55,10 @@
     "chai-http": "^3.0.0",
     "eslint": "^3.8.1",
     "eslint-plugin-babel": "^3.3.0",
+    "faker": "^3.1.0",
     "isparta": "^4.0.0",
     "mocha": "^3.1.2",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "rosie": "^1.6.0"
   }
 }

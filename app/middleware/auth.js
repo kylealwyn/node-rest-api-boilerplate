@@ -16,9 +16,8 @@ export function authenticate(req, res, next) {
 
     // If token is decoded successfully, find user and attach to our request
     // for use in our route or other middleware
-    User
-      .findById(decoded._id)
-      .then((user) => {
+    User.findById(decoded._id)
+      .then(user => {
         if (!user) {
           return res.sendStatus(401);
         }
@@ -33,20 +32,19 @@ export function authenticate(req, res, next) {
 /**
  * Checks if the user role meets the minimum requirements of the route
  */
-export function hasRole(roleRequired) {
-  if (!roleRequired) {
+export function accessControl(role) {
+  if (!role) {
     throw new Error('Required role needs to be set');
   }
 
-  return compose()
-    .use(isAuthenticated())
-    .use(function meetsRequirements(req, res, next) {
+  return (req, res, next) => {
+    authenticate(req, res, () => {
       if (Constants.userRoles.indexOf(req.user.role) >=
           Constants.userRoles.indexOf(roleRequired)) {
         next();
-      }
-      else {
+      } else {
         res.sendStatus(403);
       }
-    });
+    })
+  }
 }

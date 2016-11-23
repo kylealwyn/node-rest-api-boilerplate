@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import passport from 'passport';
+
 import User from '../models/user';
+import {formatApiError} from '../lib/error';
 
 // BASE: /auth
 const authRoute = new Router();
@@ -9,17 +11,12 @@ const authRoute = new Router();
  * Login with email
  */
 authRoute.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    const error = err || info;
-
-    if (error) {
-      return res.status(401).json(error);
-    } else if (!user) {
-      return res.status(404).json({ success: false, message: 'Please verify you are using the correct credentials.' });
+  passport.authenticate('local', (err, user) => {
+    if (err) {
+      return res.status(401).json(err);
     }
 
-    const token = user.generateToken();
-    res.json({ token });
+    res.json({ token: user.generateToken() });
   })(req, res, next);
 });
 
@@ -27,17 +24,15 @@ authRoute.post('/login', (req, res, next) => {
  * Create User
  */
 authRoute.post('/register/email', (req, res) => {
-  const newUser = new User(req.body);
-  newUser.provider = 'local';
-  newUser.role = 'user';
-  newUser.save((err, user) => {
-    if (err) {
-      return res.status(400).json(err);
-    }
-
-    const token = user.generateToken();
-    res.json({ token });
-  });
+  const user = new User(req.body);
+  user.provider = 'local';
+  user.save()
+    .then(saved => {
+      res.status(201).json({ token: saved.generateToken() });
+    })
+    .catch(err => {
+      res.status(400).json(formatApiError(err));
+    });
 });
 
 export default authRoute;

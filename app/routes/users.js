@@ -7,18 +7,17 @@ import { handleApiError } from '../lib/error';
 // Base: /users
 let userRoute = new Router();
 
-function attachUser(req, res, next) {
-  User.findById(req.params.id, (err, user) => {
-    if (err) {
-      return res.status(400).send('Invalid ID.');
-    }
-    if (!user) {
-      return res.status(404).send('User does not exist.');
-    }
+function populateUser(req, res, next) {
+  User.findOne({username: req.params.username})
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({message: 'User not found.'});
+      }
 
-    req.user = user;
-    next();
-  });
+      req.user = user;
+      next();
+    })
+    .catch(err => handleApiError(err));
 }
 
 /**
@@ -27,7 +26,6 @@ function attachUser(req, res, next) {
  */
 userRoute.get('/', authenticate, (req, res) => {
   User.find({})
-    .exec()
     .then(users => res.json(users))
     .catch(err => handleApiError(err, res))
 });
@@ -46,7 +44,7 @@ userRoute.put('/me', authenticate, (req, res) => {
 });
 
 /**
- * Update User
+ * Delete User
  */
 userRoute.delete('/me', authenticate, (req, res) => {
   req.currentUser.remove(respondWithStatus(res, 204))
@@ -55,6 +53,6 @@ userRoute.delete('/me', authenticate, (req, res) => {
 /**
  * Get User By Id
  */
-userRoute.get('/:id', authenticate, attachUser, (req, res) => res.json(req.user));
+userRoute.get('/:username', authenticate, populateUser, (req, res) => res.json(req.user));
 
 export default userRoute;

@@ -5,7 +5,7 @@ import users from './users';
 
 import constants from '../config/constants';
 
-// Base: /api
+// Base: /
 const baseRoute = new Router();
 
 /**

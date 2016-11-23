@@ -41,8 +41,11 @@ if (constants.envs.development) {
 }
 
 app.listen(constants.port, () => {
-  // Up and running!
-  console.log(`Live on port ${constants.port} running on ${app.get('env')}.`);
+  // eslint-disable-next-line no-console
+  console.log(`
+    Port: ${constants.port}
+    Env: ${app.get('env')}
+  `);
 });
 
 export default app;

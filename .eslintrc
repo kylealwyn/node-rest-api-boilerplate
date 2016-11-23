@@ -4,7 +4,9 @@
     "modules": true
   },
   "env": {
-    "node": true
+    "node": true,
+    "mocha": true,
+    "es6": true
   },
   "parser": "babel-eslint",
   "rules": {
@@ -16,9 +18,5 @@
   },
   "plugins": [
     "babel"
-  ],
-  "globals": {
-    "it": true,
-    "describe": true
-  }
+  ]
 }
