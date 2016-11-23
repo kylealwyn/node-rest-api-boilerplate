@@ -24,13 +24,13 @@ describe('Model: User', () => {
         savedUser = user;
         done()
       });
-  })
+  });
 
   beforeEach(() => {
     defaultUser = Object.assign({}, masterUserCopy);
   });
 
-  describe('Creation', () => {
+  describe('#save', () => {
     it('requires an email, username, and password', () => {
       const user = new User();
 
@@ -74,7 +74,7 @@ describe('Model: User', () => {
     });
   });
 
-  describe('Authentication', () => {
+  describe('#authenticate', () => {
     it('should be authenticate with correct password', () => {
       expect(savedUser.authenticate(defaultUser.password)).to.be.truthy;
     });
@@ -84,11 +84,24 @@ describe('Model: User', () => {
     });
   });
 
-  describe('Render', () => {
-    it('should remove password when rendering to JSON', () => {
+  describe('#toJSON', () => {
+    it('should remove password', () => {
       const jsonUser = savedUser.toJSON();
       expect(savedUser.password).to.exist;
       expect(jsonUser.password).to.not.exist;
+    });
+
+    it('should remove __v', () => {
+      const jsonUser = savedUser.toJSON();
+      expect(savedUser.__v).to.exist;
+      expect(jsonUser.__v).to.not.exist;
+    });
+
+    it('should convert _id to id', () => {
+      const jsonUser = savedUser.toJSON();
+      expect(savedUser._id).to.exist;
+      expect(jsonUser._id).to.not.exist;
+      expect(jsonUser.id).to.exist;
     });
   });
 });

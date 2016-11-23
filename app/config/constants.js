@@ -1,4 +1,5 @@
 import path from 'path';
+import {mergeDeep} from '../lib/util'
 
 const environmentSpecificConfig = {
   development: {
@@ -8,8 +9,12 @@ const environmentSpecificConfig = {
     seedDB: true
   },
   test: {
+    port: 5678,
     mongo: {
       uri: 'mongodb://localhost/test'
+    },
+    security: {
+      saltRounds: 4
     }
   },
   production: {
@@ -36,10 +41,6 @@ const defaultConfig = {
   port: process.env.PORT || 4567,
   ip: process.env.IP || '0.0.0.0',
   seedDB: false,
-  sessionExpiry: 60 * 60 * 24 * 7, // 1 week,
-  secrets: {
-    session: 'i-am-the-secret-key' // This should be loaded in via the environment in production
-  },
   userRoles: ['guest', 'user', 'admin'],
   mongo: {
     options: {
@@ -48,13 +49,13 @@ const defaultConfig = {
       }
     }
   },
-  facebook: {
-    clientID:     process.env.FACEBOOK_ID || 'id',
-    clientSecret: process.env.FACEBOOK_SECRET || 'secret',
-    callbackURL:  (process.env.DOMAIN || '') + '/auth/facebook/callback'
+  security: {
+    sessionSecret: 'i-am-the-secret-key',
+    sessionExpiration: 60 * 60 * 24 * 7, // 1 week
+    saltRounds: 12
   }
 };
 
-// Export the config object based on the NODE_ENV
-// ==============================================
-export default Object.assign(defaultConfig, environmentSpecificConfig[process.env.NODE_ENV]|| {});
+// Merge default and environment config
+const config = mergeDeep(defaultConfig, environmentSpecificConfig[process.env.NODE_ENV]|| {});
+export default config

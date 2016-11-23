@@ -43,6 +43,9 @@ const UserSchema = new Schema({
 UserSchema.set('toJSON', {
   virtuals: true,
   transform(doc, obj) {
+    obj.id = obj._id;
+    delete obj._id;
+    delete obj.__v;
     delete obj.password;
     return obj;
   }
@@ -79,13 +82,16 @@ UserSchema
 
 //
 UserSchema
-  .pre('save', function (doSave) {
+  .pre('save', function (done) {
     // Encrypt password before saving the document
     if (this.isModified('password')) {
-      this.password = this._hashPassword(this.password)
+      this._hashPassword(this.password, Constants.security.saltRounds, (err, hash) => {
+        this.password = hash;
+        done();
+      })
+    } else {
+      done();
     }
-
-    doSave();
   });
 
 /**
@@ -98,8 +104,7 @@ UserSchema.methods = {
 
   /**
    * Authenticate - check if the passwords are the same
-   *
-   * @api public
+   * @public
    * @param {String} password
    * @return {Boolean} passwords match
    */
@@ -107,20 +112,25 @@ UserSchema.methods = {
     return bcrypt.compareSync(password, this.password);
   },
 
+  /**
+   * Generates a JSON Web token used for route authentication
+   * @public
+   * @return {String} signed JSON web token
+   */
   generateToken() {
-    return jwt.sign({ _id: this._id }, Constants.secrets.session, {
-      expiresIn: Constants.sessionExpiry
+    return jwt.sign({ _id: this._id }, Constants.security.sessionSecret, {
+      expiresIn: Constants.security.sessionExpiration
     });
   },
 
   /**
    * Create password hash
-   * @api private
+   * @private
    * @param {String} password
    * @return {Boolean} passwords match
    */
-  _hashPassword(password, byteSize = 12) {
-    return bcrypt.hashSync(password, byteSize)
+  _hashPassword(password, saltRounds = Constants.security.saltRounds, callback) {
+    return bcrypt.hash(password, saltRounds, callback)
   }
 };
 

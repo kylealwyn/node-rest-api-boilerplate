@@ -1,24 +1,22 @@
 {
   "extends": ["eslint:recommended"],
   "ecmaFeatures": {
-    "modules": true
-  },
-  "env": {
-    "node": true
+    "sourceType": "module"
   },
   "parser": "babel-eslint",
+  "plugins": [
+    "babel"
+  ],
+  "env": {
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
   "rules": {
     "quotes": [2, "single"],
     "strict": [2, "never"],
     "babel/generator-star-spacing": 1,
     "babel/new-cap": 1,
     "babel/no-await-in-loop": 1
-  },
-  "plugins": [
-    "babel"
-  ],
-  "globals": {
-    "it": true,
-    "describe": true
   }
 }
