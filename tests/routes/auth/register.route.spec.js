@@ -5,10 +5,11 @@ import UserFactory from '../../factories/user.factory';
 
 const expect = chai.expect;
 
+const ENDPOINT = '/auth/register/email';
 let defaultUserPayload = new UserFactory();
 let savedUser;
 
-describe('Route: /auth/register/email', () => {
+describe(`Route: ${ENDPOINT}`, () => {
   before(done => {
     User.remove({})
       .then(() => {
@@ -27,7 +28,7 @@ describe('Route: /auth/register/email', () => {
 
   describe('201: Created', () => {
     it('return an auth token upon creation', () => {
-      return server.post('/auth/register/email')
+      return server.post(ENDPOINT)
         .send(new UserFactory({username: 'newusername', email: 'newemail@gmail.com'}))
         .then(res => {
           expect(res).to.have.status(201);
@@ -38,7 +39,7 @@ describe('Route: /auth/register/email', () => {
 
   describe('400: Bad Request', () => {
     it('requires unique email and username', done => {
-      server.post('/auth/register/email')
+      server.post(ENDPOINT)
         .send(savedUser.toJSON())
         .end((err, res) => {
           expect(res).to.have.status(400);
@@ -51,7 +52,7 @@ describe('Route: /auth/register/email', () => {
 
     it('requires a password', done => {
       delete defaultUserPayload.password;
-      server.post('/auth/register/email')
+      server.post(ENDPOINT)
         .send(defaultUserPayload)
         .end((err, res) => {
           expect(res).to.have.status(400);
@@ -62,7 +63,7 @@ describe('Route: /auth/register/email', () => {
     });
 
     it('requires a strong password', done => {
-      server.post('/auth/register/email')
+      server.post(ENDPOINT)
         .send(new UserFactory({password: 'short'}))
         .end((err, res) => {
           expect(res).to.have.status(400);

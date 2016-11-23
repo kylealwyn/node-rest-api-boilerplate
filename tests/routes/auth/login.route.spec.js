@@ -5,10 +5,11 @@ import UserFactory from '../../factories/user.factory';
 
 const expect = chai.expect;
 
+const ENDPOINT = '/auth/login'
 let defaultUserPayload = new UserFactory();
 let savedUser;
 
-describe('Route: /auth/login', () => {
+describe(`Route: ${ENDPOINT}`, () => {
   before(done => {
     User.remove({})
       .then(() => {
@@ -23,7 +24,7 @@ describe('Route: /auth/login', () => {
 
   describe('200: Ok', () => {
     it('return an auth token upon successful password verification', () => {
-      return server.post('/auth/login')
+      return server.post(ENDPOINT)
         .send({username: savedUser.username, password: defaultUserPayload.password})
         .then(res => {
           expect(res).to.have.status(200);
@@ -34,7 +35,7 @@ describe('Route: /auth/login', () => {
 
   describe('401: Unauthorized', () => {
     it('correct username, incorrect password', done => {
-      server.post('/auth/login')
+      server.post(ENDPOINT)
         .send({username: savedUser.username, password: 'wrong'})
         .end((err, res) => {
           expect(res).to.have.status(401);
@@ -44,7 +45,7 @@ describe('Route: /auth/login', () => {
     });
 
     it('incorrect username, incorrect password', done => {
-      server.post('/auth/login')
+      server.post(ENDPOINT)
         .send({username: 'wrong', password: 'wrong'})
         .end((err, res) => {
           expect(res).to.have.status(401);
