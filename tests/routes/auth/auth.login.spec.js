@@ -43,7 +43,7 @@ describe(`Route: ${ENDPOINT}`, () => {
         .send({username: 'wrong', password: 'wrong'})
         .end((err, res) => {
           expect(res).to.have.status(401);
-          expect(res.body.message).to.equal('This username is not registered.')
+          expect(res.body.message).to.equal('Please verify your credentials.')
           done();
         });
     });

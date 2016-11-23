@@ -6,7 +6,6 @@ import errorHandler from 'errorhandler';
 import morgan from 'morgan';
 import helmet from 'helmet';
 
-import initializePassport from './config/passport';
 import routes from './routes';
 import Constants from './config/constants';
 import './database';
@@ -28,9 +27,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Add all HTTP methods
 app.use(methodOverride());
-
-// Setup Passport Authentication
-app.use(initializePassport());
 
 // Mount API routes
 app.use('/', routes);

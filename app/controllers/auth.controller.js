@@ -1,4 +1,4 @@
-import passport from 'passport';
+import User from '../models/user';
 import BaseController from './base.controller';
 
 class AuthController extends BaseController {
@@ -7,14 +7,18 @@ class AuthController extends BaseController {
     this.login = this.login.bind(this);
   }
 
-  login(req, res, next) {
-    passport.authenticate('local', (err, user) => {
-      if (err) {
-        return res.status(401).json(err);
-      }
+  login(req, res) {
+    const {username, password} = req.body;
 
-      res.json({ token: user.generateToken() });
-    })(req, res, next);
+    User.findOne({ username })
+      .then(user => {
+        if (!user || !user.authenticate(password)) {
+          return res.status(401).json({message: 'Please verify your credentials.'});
+        }
+
+        return res.status(200).json({token: user.generateToken()});
+      })
+      .catch(err => { res.status(500).json(this.formatApiError(err)) });
   }
 }
 
