@@ -8,7 +8,7 @@ import helmet from 'helmet';
 
 import initializePassport from './config/passport';
 import routes from './routes';
-import constants from './config/constants';
+import Constants from './config/constants';
 import './database';
 
 let app = express();
@@ -18,7 +18,7 @@ app.use(helmet());
 app.use(cors());
 
 // Logger
-if (!constants.envs.test) {
+if (!Constants.envs.test) {
   app.use(morgan('dev'));
 }
 
@@ -36,14 +36,14 @@ app.use(initializePassport());
 app.use('/', routes);
 
 // Only use error handler in development
-if (constants.envs.development) {
+if (Constants.envs.development) {
   app.use(errorHandler());
 }
 
-app.listen(constants.port, () => {
+app.listen(Constants.port, () => {
   // eslint-disable-next-line no-console
   console.log(`
-    Port: ${constants.port}
+    Port: ${Constants.port}
     Env: ${app.get('env')}
   `);
 });

@@ -4,7 +4,7 @@ import Constants from '../config/constants';
 
 export default function authenticate(req, res, next) {
   const {authorization} = req.headers;
-  jwt.verify(authorization, Constants.secrets.session, (err, decoded) => {
+  jwt.verify(authorization, Constants.security.sessionSecret, (err, decoded) => {
     if (err) {
       return res.sendStatus(401);
     }

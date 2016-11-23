@@ -12,8 +12,7 @@ class BaseController {
 	formatApiError(err) {
 		if (!err) {
 			// eslint-disable-next-line no-console
-			console.error('Provide an error');
-			throw new Error('Provide an error.');
+			return console.error('Provide an error');
 		}
 
 		const formatted = {

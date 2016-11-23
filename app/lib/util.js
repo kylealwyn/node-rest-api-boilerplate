@@ -1,33 +1,34 @@
-
-/**	Creates a callback that proxies node callback style arguments to an Express Response object.
- *	@param {express.Response} res	Express HTTP Response
- *	@param {number} [status=200]	Status code to send on success
- *
- *	@example
- *		list(req, res) {
- *			collection.find({}, toRes(res));
- *		}
+// Export the config object based on the NODE_ENV
+// ==============================================
+/**
+ * Simple is object check.
+ * @param item
+ * @returns {boolean}
  */
-export function respondWithThing(res, status) {
-	return (err, thing) => {
-		if (err) {
-			return res.status(400).send(err);
-		}
-
-		if (thing && typeof thing.toObject==='function') {
-			thing = thing.toObject();
-		}
-
-		res.status(status).json(thing);
-	};
+export function isObject(item) {
+  return (item && typeof item === 'object' && !Array.isArray(item));
 }
 
-export function respondWithStatus(res, status) {
-	return (err) => {
-		if (err) {
-			return res.status(400).send(err);
-		}
+/**
+ * Deep merge two objects.
+ * @param target
+ * @param source
+ */
+export function mergeDeep(target, source) {
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) Object.assign(target, { [key]: {} });
+        mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
+      }
+    }
+  }
+  return target;
+}
 
-		res.sendStatus(status);
-	};
+export default {
+	isObject,
+	mergeDeep
 }

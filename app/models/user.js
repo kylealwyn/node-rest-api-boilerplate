@@ -82,13 +82,16 @@ UserSchema
 
 //
 UserSchema
-  .pre('save', function (doSave) {
+  .pre('save', function (done) {
     // Encrypt password before saving the document
     if (this.isModified('password')) {
-      this.password = this._hashPassword(this.password)
+      this._hashPassword(this.password, Constants.security.saltRounds, (err, hash) => {
+        this.password = hash;
+        done();
+      })
+    } else {
+      done();
     }
-
-    doSave();
   });
 
 /**
@@ -115,8 +118,8 @@ UserSchema.methods = {
    * @return {String} signed JSON web token
    */
   generateToken() {
-    return jwt.sign({ _id: this._id }, Constants.secrets.session, {
-      expiresIn: Constants.sessionExpiry
+    return jwt.sign({ _id: this._id }, Constants.security.sessionSecret, {
+      expiresIn: Constants.security.sessionExpiration
     });
   },
 
@@ -126,8 +129,8 @@ UserSchema.methods = {
    * @param {String} password
    * @return {Boolean} passwords match
    */
-  _hashPassword(password, byteSize = 12) {
-    return bcrypt.hashSync(password, byteSize)
+  _hashPassword(password, saltRounds = Constants.security.saltRounds, callback) {
+    return bcrypt.hash(password, saltRounds, callback)
   }
 };
 
