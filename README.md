@@ -1,27 +1,16 @@
 # Express & ES6 API Boilerplate
 
 
-[![bitHound Score](https://www.bithound.io/github/kylealwyn/node-api-es6-boilerplate/badges/score.svg)](https://www.bithound.io/github/kylealwyn/node-api-es6-boilerplate)
-
 ## Features
 - [x] ES6 for javascript awesomeness
-- [x] Mongoose & MongoDB for data layer
-- [x] Email authentication via Passport
-- [x] Testing via Mocha & Chai
-- [x] Test coverage via Isparta
-
-## Commands
-
-- `npm start`
-  - Start live-reloading development server
-
-- `npm test`
-  - Run test suite
-
-- `npm run coverage`
-  - Run test coverage
+- [x] [MongoDB](https://www.mongodb.com/) w/ [Mongoose](http://mongoosejs.com/) for data layer
+- [x] Username/Email registration and authentication
+- [x] Testing via [Mocha](https://mochajs.org/) & [Chai](http://chaijs.com/)
+- [x] Test coverage via [Isparta](https://github.com/douglasduteil/isparta)
 
 ## Getting Started
+First, ensure you have node and mongo installed on your system.
+
 
 ```sh
 # clone it
@@ -35,14 +24,31 @@ rm -rf .git && git init
 npm install
 
 # Run it
-PORT=8080 npm start
+npm start
 
 ```
+
+## Commands
+
+- `npm start`
+  - Start live-reloading development server
+
+- `npm test`
+  - Run test suite
+
+- `npm run test:watch`
+  - Run test suite with auto-reloading
+
+- `npm run coverage`
+  - Run test coverage
+
+- `npm run build`
+  - Generates production ready application in `./build`
 
 ## Todo
 - [ ] Add OAuth Login Support (Facebook, Twitter, Google)
 - [ ] Add support for MySql or PostgreSQL (Possibly with sequelize)
-- [ ] Write tests to exemplify Mongo interactions
+- [x] Write tests to exemplify Mongo interactions
 
 
 ## License
