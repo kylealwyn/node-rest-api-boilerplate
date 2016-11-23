@@ -10,15 +10,10 @@ let defaultUserPayload = UserFactory.generate();
 let savedUser;
 
 describe(`POST ${ENDPOINT}`, () => {
-  before(done => {
-    User.remove({})
-      .then(() => {
-        return User.create(defaultUserPayload)
-      })
-      .then(user => {
-        savedUser = user;
-        done();
-      });
+  before(() => {
+    return User.remove({})
+      .then(() => User.create(defaultUserPayload))
+      .then(u => savedUser = u);
   });
 
   beforeEach(() => {

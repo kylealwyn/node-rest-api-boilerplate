@@ -10,9 +10,7 @@ const ENDPOINT = '/users';
 describe(`GET ${ENDPOINT}`, () => {
   before(() => {
     return User.remove({})
-      .then(() => {
-        return User.insertMany(UserFactory.generateList(5))
-      });
+      .then(() => User.insertMany(UserFactory.generateList(5)));
   });
 
   describe('200: Ok', () => {

@@ -10,16 +10,10 @@ let defaultUserPayload = UserFactory.generate();
 let savedUser;
 
 describe(`Route: ${ENDPOINT}`, () => {
-  before(done => {
-    User.remove({})
-      .then(() => {
-        const user = new User(defaultUserPayload);
-        return user.save();
-      })
-      .then(user => {
-        savedUser = user;
-        done();
-      });
+  before(() => {
+    return User.remove({})
+      .then(() => User.create(defaultUserPayload))
+      .then(u => savedUser = u);
   });
 
   describe('200: Ok', () => {
