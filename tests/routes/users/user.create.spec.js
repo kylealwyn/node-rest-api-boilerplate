@@ -20,7 +20,7 @@ describe(`POST ${ENDPOINT}`, () => {
     defaultUserPayload = UserFactory.generate();
   });
 
-  describe('201: Created', () => {
+  describe('#201', () => {
     it('return an auth token upon creation', done => {
       server.post(ENDPOINT)
         .send(UserFactory.generate({username: 'newusername', email: 'newemail@gmail.com'}))
@@ -32,7 +32,7 @@ describe(`POST ${ENDPOINT}`, () => {
     });
   });
 
-  describe('400: Bad Request', () => {
+  describe('#400', () => {
     it('requires unique email and username', done => {
       server.post(ENDPOINT)
         .send(savedUser.toJSON())

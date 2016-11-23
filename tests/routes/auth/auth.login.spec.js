@@ -9,14 +9,14 @@ const ENDPOINT = '/auth/login'
 let defaultUserPayload = UserFactory.generate();
 let savedUser;
 
-describe(`Route: ${ENDPOINT}`, () => {
+describe(`POST ${ENDPOINT}`, () => {
   before(() => {
     return User.remove({})
       .then(() => User.create(defaultUserPayload))
       .then(u => savedUser = u);
   });
 
-  describe('200: Ok', () => {
+  describe('#200', () => {
     it('return an auth token upon successful password verification', () => {
       return server.post(ENDPOINT)
         .send({username: savedUser.username, password: defaultUserPayload.password})
@@ -27,7 +27,7 @@ describe(`Route: ${ENDPOINT}`, () => {
     });
   });
 
-  describe('401: Unauthorized', () => {
+  describe('#401', () => {
     it('correct username, incorrect password', done => {
       server.post(ENDPOINT)
         .send({username: savedUser.username, password: 'wrong'})

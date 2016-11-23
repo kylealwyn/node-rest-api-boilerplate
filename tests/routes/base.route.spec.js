@@ -4,8 +4,8 @@ import constants from '../../app/config/constants';
 
 const expect = chai.expect;
 
-describe('Route: /', () => {
-  describe('200: Ok', () => {
+describe('GET /', () => {
+  describe('#200', () => {
     it('should return json', (done) => {
       server.get('/')
         .end((err, res) => {

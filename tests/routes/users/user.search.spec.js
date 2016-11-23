@@ -13,7 +13,7 @@ describe(`GET ${ENDPOINT}`, () => {
       .then(() => User.insertMany(UserFactory.generateList(5)));
   });
 
-  describe('200: Ok', () => {
+  describe('#200', () => {
     it('should return an array of users', done => {
       server.get(ENDPOINT)
         .end((err, res) => {
