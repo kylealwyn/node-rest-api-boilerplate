@@ -4,6 +4,13 @@ import User from '../models/user';
 class UsersController extends BaseController {
   constructor() {
     super();
+    this.search = this.search.bind(this);
+    this.fetch = this.fetch.bind(this);
+    this.create = this.create.bind(this);
+    this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
+
+    this.whitelist = ['firstname', 'lastname', 'email', 'username', 'password']
   }
 
   _populate(req, res, next) {
@@ -19,7 +26,7 @@ class UsersController extends BaseController {
         next();
       })
       .catch(err => {
-        res.status(500).json(this.formatApiError(err));
+        res.status(400).json(this.formatApiError(err));
       });
   }
 
@@ -43,13 +50,31 @@ class UsersController extends BaseController {
     res.json(user);
   }
 
+  create(req, res) {
+    const params = this.filterParams(req.body, this.whitelist);
+
+    const newUser = new User(params);
+    newUser.provider = 'local';
+    newUser.save()
+      .then(savedUser => {
+        res.status(201).json({ token: savedUser.generateToken() });
+      })
+      .catch(err => {
+        res.status(400).json(this.formatApiError(err));
+      });
+  }
+
   update(req, res) {
     if (!req.currentUser) {
       return res.sendStatus(403);
     }
 
-    Object.assign(req.currentUser, req.body);
-    req.currentUser.save(respondWithStatus(res, 204));
+    const params = this.filterParams(req.body, this.whitelist);
+
+    Object.assign(req.currentUser, params);
+    req.currentUser.save()
+      .then(() => res.sendStatus(204))
+      .catch(err => res.status(400).json(this.formatApiError(err)));
   }
 
   delete(req, res) {
@@ -58,7 +83,7 @@ class UsersController extends BaseController {
     }
 
     req.currentUser.remove()
-      .then(() => res.status(204))
+      .then(() => res.sendStatus(204))
       .catch(err => {
         res.status(400).json(this.formatApiError(err));
       })

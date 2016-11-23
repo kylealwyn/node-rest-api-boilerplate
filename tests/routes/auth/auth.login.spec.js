@@ -6,7 +6,7 @@ import UserFactory from '../../factories/user.factory';
 const expect = chai.expect;
 
 const ENDPOINT = '/auth/login'
-let defaultUserPayload = new UserFactory();
+let defaultUserPayload = UserFactory.generate();
 let savedUser;
 
 describe(`Route: ${ENDPOINT}`, () => {

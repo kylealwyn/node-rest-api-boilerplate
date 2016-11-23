@@ -13,10 +13,10 @@ routes.get('/', MetaController.index);
 
 // Authentication
 routes.post('/auth/login', AuthController.login);
-routes.post('/auth/register/email', AuthController.registerWithEmail);
 
 // Users
 routes.get('/users', UsersController.search);
+routes.post('/users', UsersController.create);
 routes.get('/users/me', authenticate, UsersController.fetch);
 routes.put('/users/me', authenticate, UsersController.update);
 routes.delete('/users/me', authenticate, UsersController.delete);

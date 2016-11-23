@@ -1,15 +1,25 @@
-// factories/game.js
 import faker from 'faker';
 
-export default function MockUser(attrs) {
-  Object.assign(this, {
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    username: faker.internet.userName(),
-    email: faker.internet.email(),
-    password: 'password1',
-    role: 'user'
-  }, attrs);
+class UserFactory {
+  generateList(count, attrs = {}) {
+    let list = []
+    while(count) {
+      list.push(this.generate(attrs));
+      count--;
+    }
+    return list;
+  }
 
-  return this;
+  generate(attrs) {
+    return Object.assign({}, {
+      firstname: faker.name.firstName(),
+      lastname: faker.name.lastName(),
+      username: faker.internet.userName(),
+      email: faker.internet.email(),
+      password: 'password1',
+      role: 'user'
+    }, attrs);
+  }
 }
+
+export default new UserFactory();

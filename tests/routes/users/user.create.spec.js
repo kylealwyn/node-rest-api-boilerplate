@@ -5,16 +5,15 @@ import UserFactory from '../../factories/user.factory';
 
 const expect = chai.expect;
 
-const ENDPOINT = '/auth/register/email';
-let defaultUserPayload = new UserFactory();
+const ENDPOINT = '/users';
+let defaultUserPayload = UserFactory.generate();
 let savedUser;
 
-describe(`Route: ${ENDPOINT}`, () => {
+describe(`POST ${ENDPOINT}`, () => {
   before(done => {
     User.remove({})
       .then(() => {
-        const user = new User(defaultUserPayload);
-        return user.save();
+        return User.create(defaultUserPayload)
       })
       .then(user => {
         savedUser = user;
@@ -23,16 +22,17 @@ describe(`Route: ${ENDPOINT}`, () => {
   });
 
   beforeEach(() => {
-    defaultUserPayload = new UserFactory();
+    defaultUserPayload = UserFactory.generate();
   });
 
   describe('201: Created', () => {
-    it('return an auth token upon creation', () => {
-      return server.post(ENDPOINT)
-        .send(new UserFactory({username: 'newusername', email: 'newemail@gmail.com'}))
-        .then(res => {
+    it('return an auth token upon creation', done => {
+      server.post(ENDPOINT)
+        .send(UserFactory.generate({username: 'newusername', email: 'newemail@gmail.com'}))
+        .end((err, res) => {
           expect(res).to.have.status(201);
           expect(res.body.token).to.be.defined;
+          done();
         });
     });
   });
@@ -64,7 +64,7 @@ describe(`Route: ${ENDPOINT}`, () => {
 
     it('requires a strong password', done => {
       server.post(ENDPOINT)
-        .send(new UserFactory({password: 'short'}))
+        .send(UserFactory.generate({password: 'short'}))
         .end((err, res) => {
           expect(res).to.have.status(400);
           expect(res.body.errors).to.be.defined;
@@ -72,5 +72,5 @@ describe(`Route: ${ENDPOINT}`, () => {
           done();
         });
     });
-  })
+  });
 });
