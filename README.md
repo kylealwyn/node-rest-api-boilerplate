@@ -26,6 +26,8 @@ npm install
 # Run it
 npm start
 
+# Try it!
+curl -H "Content-Type: application/json" -X POST -d '{"username":"jamesdean", "email": "example@gmail.com", "password":"password1"}' http://localhost:4567/users
 ```
 
 ## Commands
