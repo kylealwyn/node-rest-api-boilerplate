@@ -5,6 +5,7 @@ class AuthController extends BaseController {
   constructor() {
     super();
     this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   login(req, res) {
@@ -16,9 +17,21 @@ class AuthController extends BaseController {
           return res.status(401).json({message: 'Please verify your credentials.'});
         }
 
-        return res.status(200).json({token: user.generateToken()});
+        const token = user.generateToken();
+        req.session.token = token;
+        return res.status(200).json({token});
       })
       .catch(err => { res.status(500).json(this.formatApiError(err)) });
+  }
+
+  logout(req, res) {
+    req.session.destroy(err => {
+      if (err) {
+        return res.status(500).json(this.formatApiError(err));
+      }
+
+      return res.sendStatus(204);
+    });
   }
 }
 

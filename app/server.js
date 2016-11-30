@@ -8,9 +8,28 @@ import helmet from 'helmet';
 
 import routes from './routes';
 import Constants from './config/constants';
-import './database';
+import mongooseConnection from './database';
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 let app = express();
+
+const sessionOptions = {
+  secret: Constants.security.sessionSecret,
+  saveUninitialized: false, // don't create session until something stored
+  resave: false, //don't save session if unmodified
+  store: new MongoStore({
+    mongooseConnection,
+    ttl: 14 * 24 * 60 * 60 // = 14 days. Default
+  })
+}
+
+if (Constants.envs.production) {
+  app.set('trust proxy', 1) // trust first proxy
+  sessionOptions.cookie.secure = true // serve secure cookies
+}
+
+app.use(session(sessionOptions));
 
 // Adds some security best practices
 app.use(helmet());
