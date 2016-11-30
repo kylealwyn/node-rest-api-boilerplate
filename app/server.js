@@ -16,6 +16,10 @@ let app = express();
 app.use(helmet());
 app.use(cors());
 
+// Uncomment if you want to render views
+app.set('views', `${__dirname}/views`);
+app.set('view engine', 'jade');
+
 // Logger
 if (!Constants.envs.test) {
   app.use(morgan('dev'));
