@@ -18,7 +18,10 @@ class AuthController extends BaseController {
         }
 
         const token = user.generateToken();
-        req.session.token = token;
+
+        req.session.authorization = token;
+        req.session.user = user;
+
         return res.status(200).json({token});
       })
       .catch(err => { res.status(500).json(this.formatApiError(err)) });

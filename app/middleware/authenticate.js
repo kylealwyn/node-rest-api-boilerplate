@@ -3,7 +3,8 @@ import User from '../models/user';
 import Constants from '../config/constants';
 
 export default function authenticate(req, res, next) {
-  const {authorization} = req.headers;
+  const {authorization} = req.headers || req.session;
+
   jwt.verify(authorization, Constants.security.sessionSecret, (err, decoded) => {
     if (err) {
       return res.sendStatus(401);
@@ -19,6 +20,6 @@ export default function authenticate(req, res, next) {
         req.currentUser = user
         next();
       })
-      .catch((err) => next(err));
+      .catch(err => next(err));
   });
 }
