@@ -51,7 +51,7 @@ curl -H "Content-Type: application/json" -X POST -d '{"username":"jamesdean", "e
 - [ ] Add OAuth Login Support (Facebook, Twitter, Google)
 - [ ] Add support for MySql or PostgreSQL (Possibly with sequelize)
 - [x] Write tests to exemplify Mongo interactions
-
+- [ ] Move all data retrieval logic into services to remove Mongo dependences in controllers
 
 ## License
 MIT
