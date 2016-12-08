@@ -1,7 +1,7 @@
 {
-  "name": "node-api-es6-boilerplate",
+  "name": "node-rest-api-boilerplate",
   "version": "0.7.1",
-  "description": "Starter project for an ES6 RESTful Express API",
+  "description": "Boilerplate project for a restful node backend server powered by ES6 and Express",
   "main": "index.js",
   "scripts": {
     "build": "npm run clean && babel app -d build",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/kylealwyn/node-api-es6-boilerplate.git"
+    "url": "git://github.com/kylealwyn/node-rest-api-boilerplate.git"
   },
   "keywords": [
     "express",
@@ -25,9 +25,9 @@
   "author": "Kyle Alwyn <kjalwyn@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kylealwyn/node-api-es6-boilerplate/issues"
+    "url": "https://github.com/kylealwyn/node-rest-api-boilerplate/issues"
   },
-  "homepage": "https://github.com/kylealwyn/node-api-es6-boilerplate",
+  "homepage": "https://github.com/kylealwyn/node-rest-api-boilerplate",
   "dependencies": {
     "babel-core": "^6.18.0",
     "bcrypt": "^0.8.7",
