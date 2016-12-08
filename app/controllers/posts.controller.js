@@ -38,9 +38,17 @@ class PostController extends BaseController {
       })
   }
 
+  /**
+   * req.post is populated by middleware in routes.js
+   */
+
   fetch(req, res) {
     res.json(req.post);
   }
+
+  /**
+   * req.user is populated by middleware in routes.js
+   */
 
   create(req, res) {
     const post = new Post(req.body);
