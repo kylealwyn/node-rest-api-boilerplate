@@ -3,18 +3,21 @@ html
   head
     title= title
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css', rel='stylesheet', media='screen')
-    link(rel='stylesheet', href='/stylesheets/style.css')
-      
+
+    link(href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css', rel='stylesheet', media='screen')
+    link(href='//fonts.googleapis.com/css?family=Work+Sans:400,700', rel='stylesheet')
+    link(rel='stylesheet', href='/styles/app.css')
+
     block head
   body
     include ../components/header
-    
+
     main
       block content
-        
+
     include ../components/footer
-      
-    script(src='http://code.jquery.com/jquery.js')
-    script(src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js')
+
+    script(src='//code.jquery.com/jquery.min.js')
+    script(src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js')
+    script(src="/scripts/global.js")
     block scripts

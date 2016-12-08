@@ -1,0 +1,30 @@
+extends ../layouts/application
+
+block content
+  .container
+    h1 login
+
+    form(id="loginForm")
+      .form-group
+        input.form-control(id="username", name="username", type="text")
+      .form-group
+        input.form-control(id="password", name="password", type="password")
+      .form-group
+        button.btn.btn-success(type="submit") Login
+
+block scripts
+  script(type="text/javascript").
+    (function () {
+      $('#loginForm').submit(function (event) {
+        event.preventDefault();
+        var form = $(this);
+
+        $.post('api/auth/login', form.serialize())
+          .then(function (res) {
+            console.log(res);
+          })
+          .fail(function (err) {
+            console.log(err)
+          });
+      });
+    }());

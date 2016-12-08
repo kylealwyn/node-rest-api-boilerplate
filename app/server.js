@@ -5,6 +5,7 @@ import methodOverride from 'method-override';
 import errorHandler from 'errorhandler';
 import morgan from 'morgan';
 import helmet from 'helmet';
+import sass from 'node-sass-middleware';
 
 import routes from './routes';
 import Constants from './config/constants';
@@ -16,17 +17,17 @@ let app = express();
 
 const sessionOptions = {
   secret: Constants.security.sessionSecret,
+  resave: false,
   saveUninitialized: false, // don't create session until something stored
-  resave: false, //don't save session if unmodified
   store: new MongoStore({
     mongooseConnection,
-    ttl: 14 * 24 * 60 * 60 // = 14 days. Default
-  })
-}
+    ttl: Constants.security.sessionExpiration,
+  }),
+};
 
 if (Constants.envs.production) {
-  app.set('trust proxy', 1) // trust first proxy
-  sessionOptions.cookie.secure = true // serve secure cookies
+  app.set('trust proxy', 1); // trust first proxy
+  sessionOptions.cookie.secure = true; // serve secure cookies
 }
 
 app.use(session(sessionOptions));
@@ -39,6 +40,8 @@ app.use(cors());
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'jade');
 
+app.use(express.static(`${__dirname}/public`));
+
 // Logger
 if (!Constants.envs.test) {
   app.use(morgan('dev'));
@@ -46,7 +49,7 @@ if (!Constants.envs.test) {
 
 // Properly Decode JSON
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 
 // Add all HTTP methods
 app.use(methodOverride());

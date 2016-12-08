@@ -4,6 +4,7 @@ import Post from '../models/post';
 class PostController extends BaseController {
   constructor() {
     super();
+
     this.search = this.search.bind(this);
     this.fetch = this.fetch.bind(this);
     this.create = this.create.bind(this);

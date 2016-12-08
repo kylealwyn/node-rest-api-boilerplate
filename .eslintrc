@@ -15,6 +15,7 @@
   "rules": {
     "quotes": [2, "single"],
     "strict": [2, "never"],
+    "max-len": [1, 120],
     "babel/generator-star-spacing": 1,
     "babel/new-cap": 1,
     "babel/no-await-in-loop": 1

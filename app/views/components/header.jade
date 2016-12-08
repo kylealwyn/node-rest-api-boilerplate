@@ -1,5 +1,25 @@
 header
-  nav
-    ul
-      li link
-      li Link
+  nav#navbar.navbar-collapse.collapse
+    ul.nav.navbar-nav
+      li.active
+        a(href='/') Home
+      li
+        a(href='/login') Login
+      li
+        a(href='/contact') Contact
+      li.dropdown
+
+
+
+    ul.nav.navbar-nav.navbar-right
+      li.dropdown
+        if user
+          a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+            span= user.username
+            span.caret
+          ul.dropdown-menu
+            li
+              a(href='/api/auth/logout') Logout
+
+        else
+          button login

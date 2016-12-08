@@ -1,0 +1,24 @@
+html {
+  height: 100%;
+}
+
+body {
+  position: relative;
+  min-height: 100%;
+  font-family: 'Work Sans', sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+
+  > main {
+    flex: 1;
+  }
+}
+
+// Elements
+@import 'elements/buttons';
+
+// Components
+@import 'components/footer';

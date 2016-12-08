@@ -4,12 +4,13 @@ import BaseController from './base.controller';
 class AuthController extends BaseController {
   constructor() {
     super();
+
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
   }
 
   login(req, res) {
-    const {username, password} = req.body;
+    const {username, password} = this.filterParams(req.body, ['username', 'password']);
 
     User.findOne({ username })
       .then(user => {
@@ -24,7 +25,9 @@ class AuthController extends BaseController {
 
         return res.status(200).json({token});
       })
-      .catch(err => { res.status(500).json(this.formatApiError(err)) });
+      .catch(err => {
+        res.status(500).json(this.formatApiError(err))
+      });
   }
 
   logout(req, res) {
@@ -33,7 +36,7 @@ class AuthController extends BaseController {
         return res.status(500).json(this.formatApiError(err));
       }
 
-      return res.sendStatus(204);
+      res.redirect('/login');
     });
   }
 }
