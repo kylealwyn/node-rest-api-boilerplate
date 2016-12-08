@@ -1,31 +1,7 @@
 import path from 'path';
-import {mergeDeep} from '../lib/util'
+import {merge} from 'lodash';
 
-const environmentSpecificConfig = {
-  development: {
-    mongo: {
-      uri: 'mongodb://localhost/development'
-    },
-    seedDB: true
-  },
-  test: {
-    port: 5678,
-    mongo: {
-      uri: 'mongodb://localhost/test'
-    },
-    security: {
-      saltRounds: 4
-    }
-  },
-  production: {
-    mongo: {
-      uri: ''
-    }
-  }
-};
-
-// All configurations will extend these options
-// ============================================
+// Default configuations applied to all environments
 const defaultConfig = {
   env: process.env.NODE_ENV,
   get envs() {
@@ -36,26 +12,60 @@ const defaultConfig = {
     }
   },
 
-  version: '1.0.0',
+  version: require('../../package.json').version,
   root: path.normalize(__dirname + '/../../..'),
   port: process.env.PORT || 4567,
   ip: process.env.IP || '0.0.0.0',
-  seedDB: false,
   userRoles: ['guest', 'user', 'admin'],
+
+  /**
+   * MongoDB configuration options
+   */
   mongo: {
+    seed: true,
     options: {
       db: {
         safe: true
       }
     }
   },
+
+  /**
+   * Security configuation options regarding sessions, authentication and hashing
+   */
   security: {
-    sessionSecret: 'i-am-the-secret-key',
-    sessionExpiration: 60 * 60 * 24 * 7, // 1 week
-    saltRounds: 12
+    sessionSecret: process.env.SESSION_SECRET || 'i-am-the-secret-key',
+    sessionExpiration: process.env.SESSION_EXPIRATION || 60 * 60 * 24 * 7, // 1 week
+    saltRounds: process.env.SALT_ROUNDS || 12
   }
 };
 
-// Merge default and environment config
-const config = mergeDeep(defaultConfig, environmentSpecificConfig[process.env.NODE_ENV]|| {});
-export default config
+// Environment specific overrides
+const environmentConfigs = {
+  development: {
+    mongo: {
+      uri: process.env.MONGO_URI || 'mongodb://localhost/development'
+    },
+    security: {
+      saltRounds: 4
+    }
+  },
+  test: {
+    port: 5678,
+    mongo: {
+      uri: process.env.MONGO_URI || 'mongodb://localhost/test'
+    },
+    security: {
+      saltRounds: 4
+    }
+  },
+  production: {
+    mongo: {
+      seed: false,
+      uri: process.env.MONGO_URI
+    }
+  }
+};
+
+// Recursively merge configurations
+export default merge(defaultConfig, environmentConfigs[process.env.NODE_ENV]|| {});
