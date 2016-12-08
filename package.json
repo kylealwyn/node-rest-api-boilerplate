@@ -1,6 +1,6 @@
 {
   "name": "node-rest-api-boilerplate",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Boilerplate project for a restful node backend server powered by ES6 and Express",
   "main": "index.js",
   "scripts": {
