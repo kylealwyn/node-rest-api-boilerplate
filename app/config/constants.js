@@ -17,7 +17,7 @@ const defaultConfig = {
   port: process.env.PORT || 4567,
   ip: process.env.IP || '0.0.0.0',
   seedDB: false,
-  userRoles: ['guest', 'user', 'admin'],
+  userRoles: ['user', 'admin'],
   mongo: {
     options: {
       db: {

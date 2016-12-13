@@ -58,7 +58,12 @@ class UsersController extends BaseController {
     newUser.provider = 'local';
     newUser.save()
       .then(savedUser => {
-        res.status(201).json({ token: savedUser.generateToken() });
+        const token = savedUser.generateToken()
+
+        req.session.authorization = token;
+        req.session.user = savedUser;
+
+        res.status(201).json({ token });
       })
       .catch(err => {
         res.status(400).json(this.formatApiError(err));

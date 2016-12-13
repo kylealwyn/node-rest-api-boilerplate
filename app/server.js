@@ -5,7 +5,6 @@ import methodOverride from 'method-override';
 import errorHandler from 'errorhandler';
 import morgan from 'morgan';
 import helmet from 'helmet';
-import sass from 'node-sass-middleware';
 
 import routes from './routes';
 import Constants from './config/constants';

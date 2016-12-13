@@ -6,8 +6,9 @@
   "scripts": {
     "build": "npm run clean && babel app -d build",
     "clean": "rm -rf build && mkdir build",
-    "start": "concurrently 'nodemon index.js' 'npm run styles' 'npm run scripts'",
-    "styles": "node-sass -w -r app/styles/app.scss app/public/styles/app.css",
+    "seed": "NODE_ENV=development babel-node app/config/seed",
+    "start": "concurrently 'nodemon --ignore /'**/*.scss/' index.js' 'npm run styles' 'npm run scripts'",
+    "styles": "node-sass -w ./app/styles/ -r app/styles/app.scss app/public/styles/app.css",
     "scripts": "babel -w -d app/public/scripts app/scripts",
     "test": "NODE_ENV=test mocha --recursive --reporter spec --compilers js:babel-register tests",
     "test:watch": "nodemon --exec 'npm run test' tests",
@@ -46,8 +47,7 @@
     "method-override": "^2.3.6",
     "mongoose": "^4.6.5",
     "morgan": "^1.7.0",
-    "multer": "^1.2.0",
-    "node-sass-middleware": "^0.10.0"
+    "multer": "^1.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -56,12 +56,14 @@
     "babel-register": "^6.18.0",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
+    "concurrently": "^3.1.0",
     "eslint": "^3.8.1",
     "eslint-config-google": "^0.7.1",
     "eslint-plugin-babel": "^4.0.0",
     "faker": "^3.1.0",
     "isparta": "^4.0.0",
     "mocha": "^3.1.2",
+    "node-sass": "^4.0.0",
     "nodemon": "^1.11.0"
   }
 }

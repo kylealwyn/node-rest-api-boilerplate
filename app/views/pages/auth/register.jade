@@ -1,0 +1,41 @@
+extends ../../layouts/application
+
+block content
+  .container
+    h1 Sign Up
+
+    form(id="loginForm")
+      .form-group
+        label(for="firstname") First Name
+        input.form-control(id="firstname", name="firstname", type="text")
+      .form-group
+        label(for="lastname") Last Name
+        input.form-control(id="lastname", name="lastname", type="text")
+      .form-group
+        label(for="username") Username
+        input.form-control(id="username", name="username", type="text")
+      .form-group
+        label(for="email") Email
+        input.form-control(id="email", name="email", type="email")
+      .form-group
+        label(for="firstname") Password
+        input.form-control(id="password", name="password", type="password")
+      .form-group
+        button.btn.btn-success(type="submit") Sign Up
+
+block scripts
+  script(type="text/javascript").
+    (function () {
+      $('#loginForm').submit(function (event) {
+        event.preventDefault();
+        var form = $(this);
+
+        $.post('api/users', form.serialize())
+          .then(function (res) {
+            window.location.href = '/'
+          })
+          .fail(function (err) {
+            console.log(err)
+          });
+      });
+    }());

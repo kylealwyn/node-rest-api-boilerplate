@@ -1,14 +1,25 @@
 import authenticate from './authenticate';
+import Constants from '../config/constants';
 
-// TODO
 export default function accessControl(role) {
   if (!role) {
-    throw new Error('Required role needs to be set');
+    throw new Error('Provide a role.');
+  }
+
+  const requiredRoleIndex = Constants.userRoles.indexOf(role)
+
+  if (requiredRoleIndex < 0) {
+    throw new Error('Not a valid role.')
   }
 
   return (req, res, next) => {
-    authenticate(req, res, () => {
+    authenticate(req, res, (err) => {
+      if (err || !req.currentUser || Constants.userRoles.indexOf(req.currentUser.role) < requiredRoleIndex) {
+        res.redirect('/login')
+        return
+      }
+
       next()
-    })
+    });
   }
 }

@@ -1,4 +1,4 @@
-extends ../layouts/application
+extends ../../layouts/application
 
 block content
   .container
@@ -6,9 +6,9 @@ block content
 
     form(id="loginForm")
       .form-group
-        input.form-control(id="username", name="username", type="text")
+        input.form-element(id="username", name="username", type="text")
       .form-group
-        input.form-control(id="password", name="password", type="password")
+        input.form-element(id="password", name="password", type="password")
       .form-group
         button.btn.btn-success(type="submit") Login
 
@@ -22,6 +22,7 @@ block scripts
         $.post('api/auth/login', form.serialize())
           .then(function (res) {
             console.log(res);
+            window.location.href = '/'
           })
           .fail(function (err) {
             console.log(err)

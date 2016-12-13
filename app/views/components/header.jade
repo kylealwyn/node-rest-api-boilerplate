@@ -1,15 +1,25 @@
 header
   nav#navbar.navbar-collapse.collapse
     ul.nav.navbar-nav
+      // Default Nav
       li.active
         a(href='/') Home
-      li
-        a(href='/login') Login
-      li
-        a(href='/contact') Contact
-      li.dropdown
-
-
+        
+      unless user
+        li
+          a(href='/login') Login
+        li
+          a(href='/register') Sign Up
+      
+      else
+        li
+          a(href='/login') Only If Logged In
+          
+        if user.role == 'admin'
+          li
+            a(href='/admin') Only If Admin
+        
+      
 
     ul.nav.navbar-nav.navbar-right
       li.dropdown
@@ -22,4 +32,5 @@ header
               a(href='/api/auth/logout') Logout
 
         else
+          button sign in
           button login

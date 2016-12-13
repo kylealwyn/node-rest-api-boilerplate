@@ -3,11 +3,17 @@ import User from '../models/user';
 import Constants from '../config/constants';
 
 export default function authenticate(req, res, next) {
-  const {authorization} = req.headers || req.session;
+  const authorization = req.headers.authorization || req.session.authorization;
+
+  if (!authorization) {
+    const err = new Error('Token must be provided.')
+    err.status = 401
+    return next(err)
+  }
 
   jwt.verify(authorization, Constants.security.sessionSecret, (err, decoded) => {
     if (err) {
-      return res.sendStatus(401);
+      return next(err);
     }
 
     // If token is decoded successfully, find user and attach to our request
@@ -15,9 +21,13 @@ export default function authenticate(req, res, next) {
     User.findById(decoded._id)
       .then(user => {
         if (!user) {
-          return res.sendStatus(401);
+          const err = new Error('User not found.')
+          err.status = 401
+          return next(err)
         }
-        req.currentUser = user
+
+        req.currentUser = res.locals.user = user;
+
         next();
       })
       .catch(err => next(err));
