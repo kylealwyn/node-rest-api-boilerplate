@@ -39,7 +39,19 @@ app.use(cors());
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'jade');
 
-app.use(express.static(`${__dirname}/public`));
+if (Constants.envs.development) {
+  const webpackMiddlewares= require('./config/webpack')
+  app.use(webpackMiddlewares.devMiddleware);
+  app.use(webpackMiddlewares.hotMiddleware);
+}
+
+function jsFileResolver(req, res, next) {
+  res.sendFile(`${__dirname}/${req.path}`);
+}
+
+app.get('/scripts/*', jsFileResolver);
+
+app.use(express.static('public'));
 
 // Logger
 if (!Constants.envs.test) {

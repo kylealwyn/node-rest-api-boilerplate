@@ -13,19 +13,5 @@ block content
         button.btn.btn-success(type="submit") Login
 
 block scripts
-  script(type="text/javascript").
-    (function () {
-      $('#loginForm').submit(function (event) {
-        event.preventDefault();
-        var form = $(this);
-
-        $.post('api/auth/login', form.serialize())
-          .then(function (res) {
-            console.log(res);
-            window.location.href = '/'
-          })
-          .fail(function (err) {
-            console.log(err)
-          });
-      });
-    }());
+  script(type="text/javascript" src="/scripts/pages/login.js")
+    

@@ -1,37 +1,37 @@
-#fh5co-footer {
+footer.global-footer {
   background: #efefef;
 }
-#fh5co-footer .fh5co-footer-links {
+footer.global-footer .fh5co-footer-links {
   padding: 0;
   margin: 0;
 }
-#fh5co-footer .fh5co-footer-links li {
+footer.global-footer .fh5co-footer-links li {
   padding: 0;
   margin: 0;
   list-style: none;
 }
-#fh5co-footer .fh5co-footer-links li a {
+footer.global-footer .fh5co-footer-links li a {
   color: #000;
   text-decoration: none;
 }
-#fh5co-footer .fh5co-footer-links li a:hover {
+footer.global-footer .fh5co-footer-links li a:hover {
   text-decoration: underline;
 }
-#fh5co-footer .fh5co-widget {
+footer.global-footer .fh5co-widget {
   margin-bottom: 30px;
 }
 @media screen and (max-width: 768px) {
-  #fh5co-footer .fh5co-widget {
+  footer.global-footer .fh5co-widget {
     text-align: left;
   }
 }
-#fh5co-footer .fh5co-widget h3 {
+footer.global-footer .fh5co-widget h3 {
   margin-bottom: 15px;
   font-weight: bold;
   font-size: 15px;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-#fh5co-footer .copyright .block {
+footer.global-footer .copyright .block {
   display: block;
 }

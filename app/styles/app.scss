@@ -1,3 +1,6 @@
+$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
+@import '~bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+
 html {
   height: 100%;
 }
@@ -6,20 +9,16 @@ body {
   position: relative;
   min-height: 100%;
   font-family: 'Work Sans', sans-serif;
-}
-
-body {
   display: flex;
   flex-direction: column;
-
   > main {
     flex: 1;
   }
 }
 
-// Elements
+/* Elements */
 @import 'elements/buttons';
 @import 'elements/forms';
 
-// Components
+/* Components */
 @import 'components/footer';
