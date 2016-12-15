@@ -21,7 +21,11 @@ class PagesController extends BaseController {
   }
 
   notFound(req, res) {
-    res.render('pages/404')
+    if (req.path.includes('.html')) {
+      res.render('pages/404')
+    } else {
+      res.sendStatus(404);
+    }
   }
 }
 

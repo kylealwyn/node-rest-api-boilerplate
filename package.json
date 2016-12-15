@@ -4,8 +4,11 @@
   "description": "Starter project for an ES6 RESTful Express API",
   "main": "index.js",
   "scripts": {
-    "build": "npm run clean && babel app -d build",
-    "clean": "rm -rf build && mkdir build",
+    "build": "NODE_ENV=production npm run clean && npm run build:server && npm run build:assets && npm run copy:assets",
+    "build:assets": "mkdir -p build/public && NODE_ENV=production webpack --progress --profile --colors",
+    "build:server": "mkdir -p build && NODE_ENV=production babel app -d build --ignore app/public",
+    "copy:assets": "cp -R app/views build/views",
+    "clean": "rm -rf build",
     "seed": "NODE_ENV=development babel-node app/config/seed",
     "start": "concurrently 'npm run server:dev' 'npm run scripts'",
     "server:dev": "nodemon --ignore ./app/scripts --ignore ./app/public",

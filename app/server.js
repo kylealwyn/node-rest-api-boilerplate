@@ -45,13 +45,7 @@ if (Constants.envs.development) {
   app.use(webpackMiddlewares.hotMiddleware);
 }
 
-function jsFileResolver(req, res, next) {
-  res.sendFile(`${__dirname}/${req.path}`);
-}
-
-app.get('/scripts/*', jsFileResolver);
-
-app.use(express.static('public'));
+app.use(express.static(`${__dirname}/public`));
 
 // Logger
 if (!Constants.envs.test) {

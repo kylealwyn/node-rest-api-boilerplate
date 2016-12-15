@@ -19,6 +19,7 @@ const defaultConfig = {
   seedDB: false,
   userRoles: ['user', 'admin'],
   mongo: {
+    uri: process.env.MONGO_URI || 'mongodb://localhost/development',
     options: {
       db: {
         safe: true
@@ -36,9 +37,6 @@ const defaultConfig = {
 // Environment specific configurations will be deeply merged into defaults
 const environmentConfigs = {
   development: {
-    mongo: {
-      uri: 'mongodb://localhost/development'
-    },
     security: {
       saltRounds: 4
     },
@@ -61,4 +59,4 @@ const environmentConfigs = {
 };
 
 // Merge default and environment config
-export default merge(defaultConfig, environmentConfigs[process.env.NODE_ENV]|| {});
+export default merge(defaultConfig, environmentConfigs[process.env.NODE_ENV] || {});

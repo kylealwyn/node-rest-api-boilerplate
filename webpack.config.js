@@ -3,16 +3,16 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 let config = {
   devtool: 'cheap-eval-source-map',
-  entry: ['./app/scripts/index.js'],
+  entry: ['./app/public/scripts/index.js'],
   output: {
     filename: 'bundle.js',
-    path: '/public',
+    path: `${__dirname}/build/public`,
     publicPath: '/assets/'
   },
   module: {
     loaders: [{
       test: /\.scss$/,
-      loader: ExtractTextPlugin.extract('style-loader' , 'css-loader!sass-loader?sourceMap')
+      loader: ExtractTextPlugin.extract('style' , 'css!postcss!sass?sourceMap')
     }, {
       test: /\.js/,
       exclude: /(node_modules|bower_components)/,
@@ -36,7 +36,7 @@ let config = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  config.output.path = `${__dirname}/app/public/scripts/`
+  config.output.path = `${__dirname}/build/public/assets`
   config.plugins.push(
     new webpack.DefinePlugin({
       'process.env': {
