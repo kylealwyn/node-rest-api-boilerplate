@@ -4,20 +4,21 @@ import User from '../models/user';
 class UsersController extends BaseController {
   constructor() {
     super();
+
     this.search = this.search.bind(this);
     this.fetch = this.fetch.bind(this);
     this.create = this.create.bind(this);
     this.update = this.update.bind(this);
     this.delete = this.delete.bind(this);
 
-    this.whitelist = ['firstname', 'lastname', 'email', 'username', 'password']
+    this.whitelist = ['firstname', 'lastname', 'email', 'username', 'password'];
   }
 
   _populate(req, res, next) {
-    const { username } = req.params;
+    const {username} = req.params;
 
     User.findOne({username})
-      .then(user => {
+      .then((user) => {
         if (!user) {
           return res.status(404).json({message: 'User not found.'});
         }
@@ -25,17 +26,17 @@ class UsersController extends BaseController {
         req.user = user;
         next();
       })
-      .catch(err => {
+      .catch((err) => {
         res.status(400).json(this.formatApiError(err));
       });
   }
 
   search(req, res) {
     User.find({})
-      .then(users => {
+      .then((users) => {
         res.json(users);
       })
-      .catch(err => {
+      .catch((err) => {
         res.status(400).json(this.formatApiError(err));
       });
   }
@@ -56,10 +57,11 @@ class UsersController extends BaseController {
     const newUser = new User(params);
     newUser.provider = 'local';
     newUser.save()
-      .then(savedUser => {
-        res.status(201).json({ token: savedUser.generateToken() });
+      .then((savedUser) => {
+        const token = savedUser.generateToken();
+        res.status(201).json({token});
       })
-      .catch(err => {
+      .catch((err) => {
         res.status(400).json(this.formatApiError(err));
       });
   }
@@ -73,8 +75,12 @@ class UsersController extends BaseController {
 
     Object.assign(req.currentUser, params);
     req.currentUser.save()
-      .then(() => res.sendStatus(204))
-      .catch(err => res.status(400).json(this.formatApiError(err)));
+      .then(() => {
+        res.sendStatus(204);
+      })
+      .catch((err) => {
+        res.status(400).json(this.formatApiError(err));
+      });
   }
 
   delete(req, res) {
@@ -83,10 +89,12 @@ class UsersController extends BaseController {
     }
 
     req.currentUser.remove()
-      .then(() => res.sendStatus(204))
-      .catch(err => {
-        res.status(400).json(this.formatApiError(err));
+      .then(() => {
+        res.sendStatus(204);
       })
+      .catch((err) => {
+        res.status(400).json(this.formatApiError(err));
+      });
   }
 }
 

@@ -7,7 +7,7 @@ export default function accessControl(role) {
 
   return (req, res, next) => {
     authenticate(req, res, () => {
-      next()
-    })
-  }
+      next();
+    });
+  };
 }

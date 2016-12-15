@@ -9,7 +9,7 @@ const defaultConfig = {
       test: process.env.NODE_ENV === 'test',
       development: process.env.NODE_ENV === 'development',
       production: process.env.NODE_ENV === 'production',
-    }
+    };
   },
 
   version: require('../../package.json').version,
@@ -26,9 +26,9 @@ const defaultConfig = {
     seed: true,
     options: {
       db: {
-        safe: true
-      }
-    }
+        safe: true,
+      },
+    },
   },
 
   /**
@@ -37,35 +37,35 @@ const defaultConfig = {
   security: {
     sessionSecret: process.env.SESSION_SECRET || 'i-am-the-secret-key',
     sessionExpiration: process.env.SESSION_EXPIRATION || 60 * 60 * 24 * 7, // 1 week
-    saltRounds: process.env.SALT_ROUNDS || 12
-  }
+    saltRounds: process.env.SALT_ROUNDS || 12,
+  },
 };
 
 // Environment specific overrides
 const environmentConfigs = {
   development: {
     mongo: {
-      uri: process.env.MONGO_URI || 'mongodb://localhost/development'
+      uri: process.env.MONGO_URI || 'mongodb://localhost/development',
     },
     security: {
-      saltRounds: 4
-    }
+      saltRounds: 4,
+    },
   },
   test: {
     port: 5678,
     mongo: {
-      uri: process.env.MONGO_URI || 'mongodb://localhost/test'
+      uri: process.env.MONGO_URI || 'mongodb://localhost/test',
     },
     security: {
-      saltRounds: 4
-    }
+      saltRounds: 4,
+    },
   },
   production: {
     mongo: {
       seed: false,
-      uri: process.env.MONGO_URI
-    }
-  }
+      uri: process.env.MONGO_URI,
+    },
+  },
 };
 
 // Recursively merge configurations

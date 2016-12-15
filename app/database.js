@@ -6,4 +6,6 @@ mongoose.Promise = global.Promise;
 
 // Connect to our mongo database;
 mongoose.connect(Constants.mongo.uri);
-mongoose.connection.on('error', (err) => { throw err; });
+mongoose.connection.on('error', (err) => {
+  throw err;
+});

@@ -1,9 +1,10 @@
 {
-  "extends": ["eslint:recommended"],
-  "ecmaFeatures": {
+  "extends": ["eslint:recommended", "google"],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
     "sourceType": "module"
   },
-  "parser": "babel-eslint",
   "plugins": [
     "babel"
   ],
@@ -13,8 +14,8 @@
     "es6": true
   },
   "rules": {
-    "quotes": [2, "single"],
     "strict": [2, "never"],
+    "require-jsdoc": 0,
     "babel/generator-star-spacing": 1,
     "babel/new-cap": 1,
     "babel/no-await-in-loop": 1

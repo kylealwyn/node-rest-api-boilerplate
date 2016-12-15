@@ -16,14 +16,16 @@ class BaseController {
 		}
 
 		const formatted = {
-			message: err.message
+			message: err.message,
 		};
 
 		if (err.errors) {
 			formatted.errors = {};
 			const errors = err.errors;
 			for (const type in errors) {
-				formatted.errors[type] = errors[type].message
+				if (errors.hasOwnProperty(type)) {
+					formatted.errors[type] = errors[type].message;
+				}
 			}
 		}
 
@@ -31,4 +33,4 @@ class BaseController {
 	}
 }
 
-export default BaseController
+export default BaseController;

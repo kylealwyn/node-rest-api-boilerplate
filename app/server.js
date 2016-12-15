@@ -23,7 +23,7 @@ if (!Constants.envs.test) {
 
 // Properly Decode JSON
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 
 // Add all HTTP methods
 app.use(methodOverride());
