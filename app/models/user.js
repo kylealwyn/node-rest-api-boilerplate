@@ -25,7 +25,7 @@ const UserSchema = new Schema({
         return emailRegex.test(email);
       },
       message: '{VALUE} is not a valid email.',
-    }
+    },
   },
   password: {
     type: String,
@@ -55,7 +55,7 @@ UserSchema.set('toJSON', {
 UserSchema
   .path('email')
   .validate((email, respond) => {
-    UserModel.findOne({email})
+    UserModel.findOne({ email })
       .then((user) => {
         respond(user ? false : true);
       })
@@ -68,7 +68,7 @@ UserSchema
 UserSchema
   .path('username')
   .validate((username, respond) => {
-    UserModel.findOne({username})
+    UserModel.findOne({ username })
       .then((user) => {
         respond(user ? false : true);
       })
@@ -89,13 +89,15 @@ UserSchema
   .pre('save', function(done) {
     // Encrypt password before saving the document
     if (this.isModified('password')) {
-      this._hashPassword(this.password, Constants.security.saltRounds, (err, hash) => {
+      const { saltRounds } = Constants.security;
+      this._hashPassword(this.password, saltRounds, (err, hash) => {
         this.password = hash;
         done();
       });
     } else {
       done();
     }
+    // eslint-enable no-invalid-this
   });
 
 /**
@@ -103,7 +105,7 @@ UserSchema
  */
 UserSchema.methods = {
   getPosts() {
-    return Post.find({_user: this._id});
+    return Post.find({ _user: this._id });
   },
 
   /**
@@ -122,7 +124,7 @@ UserSchema.methods = {
    * @return {String} signed JSON web token
    */
   generateToken() {
-    return jwt.sign({_id: this._id}, Constants.security.sessionSecret, {
+    return jwt.sign({ _id: this._id }, Constants.security.sessionSecret, {
       expiresIn: Constants.security.sessionExpiration,
     });
   },

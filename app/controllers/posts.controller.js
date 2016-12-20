@@ -2,21 +2,12 @@ import BaseController from './base.controller';
 import Post from '../models/post';
 
 class PostController extends BaseController {
-  constructor() {
-    super();
-
-    this.search = this.search.bind(this);
-    this.fetch = this.fetch.bind(this);
-    this.create = this.create.bind(this);
-    this.delete = this.delete.bind(this);
-  }
-
    // Middleware to populate post based on url param
   _populate(req, res, next) {
     Post.findById(req.params.postId)
       .then((post) => {
         if (!post) {
-          return res.status(404).json({message: 'Post not found.'});
+          return res.status(404).json({ message: 'Post not found.' });
         }
 
         req.post = post;
@@ -25,10 +16,10 @@ class PostController extends BaseController {
       .catch(() => res.sendStatus(400));
   }
 
-  search(req, res) {
+  search = (req, res) => {
     Post
       .find({})
-      .populate({path: '_user', select: '-posts -role'})
+      .populate({ path: '_user', select: '-posts -role' })
       .then((posts) => {
         res.status(200).json(posts);
       })
@@ -57,7 +48,7 @@ class PostController extends BaseController {
         res.json(p);
       })
       .catch((err) => {
-        res.status(400).json(err);
+        res.status(400).json(this.formatApiError(err));
       });
   }
 

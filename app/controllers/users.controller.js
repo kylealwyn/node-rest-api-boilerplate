@@ -73,8 +73,8 @@ class UsersController extends BaseController {
 
     const params = this.filterParams(req.body, this.whitelist);
 
-    Object.assign(req.currentUser, params);
-    req.currentUser.save()
+    const updated = Object.assign({}, req.currentUser, params);
+    updated.save()
       .then(() => {
         res.sendStatus(204);
       })

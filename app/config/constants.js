@@ -1,5 +1,5 @@
 import path from 'path';
-import {merge} from 'lodash';
+import { merge } from 'lodash';
 
 // Default configuations applied to all environments
 const defaultConfig = {
@@ -69,4 +69,4 @@ const environmentConfigs = {
 };
 
 // Recursively merge configurations
-export default merge(defaultConfig, environmentConfigs[process.env.NODE_ENV]|| {});
+export default merge(defaultConfig, environmentConfigs[process.env.NODE_ENV] || {});

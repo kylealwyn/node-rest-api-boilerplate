@@ -1,4 +1,4 @@
-import {Router} from 'express';
+import { Router } from 'express';
 
 import MetaController from './controllers/meta.controller';
 import AuthController from './controllers/auth.controller';
