@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Post from './post';
-import Constants from '../config/Constants';
+import Constants from '../config/constants';
 
 const Schema = mongoose.Schema;
 const UserSchema = new Schema({
