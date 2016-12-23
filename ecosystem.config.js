@@ -17,9 +17,8 @@ module.exports = {
       'user': 'deploy',
       'host': '54.149.99.50',
       'ref': 'origin/deploy',
-      'repo': 'git@github.com:kylealwyn/node-rest-api-boilerplate.git',
+      'repo': 'https://github.com/kylealwyn/node-rest-api-boilerplate.git',
       'path': '/var/www/node-boilerplate',
-      'post-setup': 'npm install --global pm2',
       'post-deploy': 'npm run package && npm run serve:dev',
       'env': {
         NODE_ENV: 'development',
