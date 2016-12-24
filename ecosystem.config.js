@@ -15,7 +15,7 @@ module.exports = {
   deploy: {
     dev: {
       'user': 'deploy',
-      'host': '54.149.99.50',
+      'host': 'aws',
       'ref': 'origin/deploy',
       'repo': 'https://github.com/kylealwyn/node-rest-api-boilerplate.git',
       'path': '/var/www/node-boilerplate',
