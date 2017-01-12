@@ -1,4 +1,11 @@
 
+v0.9.0 / 2017-01-12
+==================
+
+  * add: access control middleware and sample protected route
+  * fix: correct repo link in example clone
+  * add reset password todo
+
 v0.8.0 / 2017-01-12
 ===================
 
