@@ -10,28 +10,36 @@ import routes from './routes';
 import Constants from './config/constants';
 import './database';
 
-let app = express();
+const app = express();
 
-// Adds some security best practices
+// Helmet helps you secure your Express apps by setting various HTTP headers
+// https://github.com/helmetjs/helmet
 app.use(helmet());
+
+// Enable CORS with various options
+// https://github.com/expressjs/cors
 app.use(cors());
 
-// Logger
+// Request logger
+// https://github.com/expressjs/morgan
 if (!Constants.envs.test) {
   app.use(morgan('dev'));
 }
 
-// Properly Decode JSON
+// Parse incoming request bodies
+// https://github.com/expressjs/body-parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Add all HTTP methods
+// Lets you use HTTP verbs such as PUT or DELETE
+// https://github.com/expressjs/method-override
 app.use(methodOverride());
 
 // Mount API routes
-app.use('/', routes);
+app.use(Constants.apiPrefix, routes);
 
-// Only use error handler in development
+// Send stack traces in development
+// https://github.com/expressjs/errorhandler
 if (Constants.envs.development) {
   app.use(errorHandler());
 }
