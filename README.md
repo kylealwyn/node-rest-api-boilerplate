@@ -52,6 +52,7 @@ curl -H "Content-Type: application/json" -X POST -d '{"username":"jamesdean", "e
 - [ ] Add support for MySql or PostgreSQL (Possibly with sequelize)
 - [x] Write tests to exemplify Mongo interactions
 - [ ] Move all data retrieval logic into services to remove Mongo dependences in controllers
+- [ ] Reset password functionality
 
 ## License
 MIT
