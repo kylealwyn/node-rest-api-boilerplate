@@ -1,3 +1,10 @@
+
+v0.8.0 / 2017-01-12
+===================
+
+  * add public path to serve static assets
+  * add post route specs
+
 v0.7.5 / 2017-01-12
 ===================
 
