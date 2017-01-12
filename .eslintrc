@@ -17,8 +17,8 @@
     "strict": [2, "never"],
     "require-jsdoc": 0,
     "no-invalid-this": 0,
+    "max-len": [1, 120],
     "object-curly-spacing": ["error", "always"],
-    "babel/generator-star-spacing": 1,
     "babel/new-cap": 1,
     "babel/no-await-in-loop": 1
   }
