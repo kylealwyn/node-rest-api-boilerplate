@@ -30,7 +30,7 @@
   "homepage": "https://github.com/kylealwyn/node-rest-api-boilerplate",
   "dependencies": {
     "babel-core": "^6.18.0",
-    "bcrypt": "^0.8.7",
+    "bcrypt": "^1.0.0",
     "body-parser": "^1.15.2",
     "cors": "^2.8.1",
     "errorhandler": "^1.4.3",
