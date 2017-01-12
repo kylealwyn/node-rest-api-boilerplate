@@ -35,6 +35,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // https://github.com/expressjs/method-override
 app.use(methodOverride());
 
+// Mount public routes
+app.use('/public', express.static(`${__dirname}/public`));
+
 // Mount API routes
 app.use(Constants.apiPrefix, routes);
 
