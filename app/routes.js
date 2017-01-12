@@ -6,28 +6,26 @@ import UsersController from './controllers/users.controller';
 import PostsController from './controllers/posts.controller';
 
 import authenticate from './middleware/authenticate';
-import constants from './config/constants';
 
 const routes = new Router();
-const prefix = constants.apiPrefix;
 
-routes.get(`${prefix}/`, MetaController.index);
+routes.get('/', MetaController.index);
 
 // Authentication
-routes.post(`${prefix}/auth/login`, AuthController.login);
+routes.post('/auth/login', AuthController.login);
 
 // Users
-routes.get(`${prefix}/users`, UsersController.search);
-routes.post(`${prefix}/users`, UsersController.create);
-routes.get(`${prefix}/users/me`, authenticate, UsersController.fetch);
-routes.put(`${prefix}/users/me`, authenticate, UsersController.update);
-routes.delete(`${prefix}/users/me`, authenticate, UsersController.delete);
-routes.get(`${prefix}/users/:username`, UsersController._populate, UsersController.fetch)
+routes.get('/users', UsersController.search);
+routes.post('/users', UsersController.create);
+routes.get('/users/me', authenticate, UsersController.fetch);
+routes.put('/users/me', authenticate, UsersController.update);
+routes.delete('/users/me', authenticate, UsersController.delete);
+routes.get('/users/:username', UsersController._populate, UsersController.fetch);
 
 // Post
-routes.get(`${prefix}/posts`, PostsController.search);
-routes.post(`${prefix}/posts`, authenticate, PostsController.create);
-routes.get(`${prefix}/posts/:postId`, PostsController._populate, PostsController.fetch);
-routes.delete(`${prefix}/posts/:postId`, authenticate, PostsController.delete);
+routes.get('/posts', PostsController.search);
+routes.post('/posts', authenticate, PostsController.create);
+routes.get('/posts/:postId', PostsController._populate, PostsController.fetch);
+routes.delete('/posts/:postId', authenticate, PostsController.delete);
 
 export default routes;
