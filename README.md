@@ -14,8 +14,8 @@ First, ensure you have node and mongo installed on your system.
 
 ```sh
 # clone it
-git clone git@github.com:kylealwyn/node-api-es6-boilerplate.git
-cd node-api-es6-boilerplate
+git clone git@github.com:kylealwyn/node-rest-api-boilerplate.git
+cd node-rest-api-boilerplate
 
 # Make it your own
 rm -rf .git && git init
