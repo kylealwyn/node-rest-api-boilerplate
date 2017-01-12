@@ -6,6 +6,7 @@ import UsersController from './controllers/users.controller';
 import PostsController from './controllers/posts.controller';
 
 import authenticate from './middleware/authenticate';
+import accessControl from './middleware/access-control';
 
 const routes = new Router();
 
@@ -27,5 +28,8 @@ routes.get('/posts', PostsController.search);
 routes.post('/posts', authenticate, PostsController.create);
 routes.get('/posts/:postId', PostsController._populate, PostsController.fetch);
 routes.delete('/posts/:postId', authenticate, PostsController.delete);
+
+// Admin
+routes.get('/admin', accessControl('admin'), MetaController.index);
 
 export default routes;
