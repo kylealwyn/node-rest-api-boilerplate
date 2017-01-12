@@ -1,6 +1,6 @@
 {
   "name": "node-rest-api-boilerplate",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Boilerplate project for a restful node backend server powered by ES6 and Express",
   "main": "index.js",
   "scripts": {
@@ -20,8 +20,10 @@
   "keywords": [
     "express",
     "es6",
-    "restful",
-    "api"
+    "rest",
+    "api",
+    "boilerplate",
+    "mongo"
   ],
   "author": "Kyle Alwyn <kjalwyn@gmail.com>",
   "license": "MIT",
