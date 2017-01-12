@@ -2,25 +2,15 @@ import BaseController from './base.controller';
 import User from '../models/user';
 
 class UsersController extends BaseController {
-  constructor() {
-    super();
+  whitelist = ['firstname', 'lastname', 'email', 'username', 'password']
 
-    this.search = this.search.bind(this);
-    this.fetch = this.fetch.bind(this);
-    this.create = this.create.bind(this);
-    this.update = this.update.bind(this);
-    this.delete = this.delete.bind(this);
+  _populate = (req, res, next) => {
+    const { username } = req.params;
 
-    this.whitelist = ['firstname', 'lastname', 'email', 'username', 'password'];
-  }
-
-  _populate(req, res, next) {
-    const {username} = req.params;
-
-    User.findOne({username})
+    User.findOne({ username })
       .then((user) => {
         if (!user) {
-          return res.status(404).json({message: 'User not found.'});
+          return res.status(404).json({ message: 'User not found.' });
         }
 
         req.user = user;
@@ -31,7 +21,7 @@ class UsersController extends BaseController {
       });
   }
 
-  search(req, res) {
+  search = (req, res) => {
     User.find({})
       .then((users) => {
         res.json(users);
@@ -41,7 +31,7 @@ class UsersController extends BaseController {
       });
   }
 
-  fetch(req, res) {
+  fetch = (req, res) => {
     let user = req.user || req.currentUser;
 
     if (!user) {
@@ -51,7 +41,7 @@ class UsersController extends BaseController {
     res.json(user);
   }
 
-  create(req, res) {
+  create = (req, res) => {
     const params = this.filterParams(req.body, this.whitelist);
 
     const newUser = new User(params);
@@ -59,14 +49,14 @@ class UsersController extends BaseController {
     newUser.save()
       .then((savedUser) => {
         const token = savedUser.generateToken();
-        res.status(201).json({token});
+        res.status(201).json({ token });
       })
       .catch((err) => {
         res.status(400).json(this.formatApiError(err));
       });
   }
 
-  update(req, res) {
+  update = (req, res) => {
     if (!req.currentUser) {
       return res.sendStatus(403);
     }
@@ -83,7 +73,7 @@ class UsersController extends BaseController {
       });
   }
 
-  delete(req, res) {
+  delete = (req, res) => {
     if (!req.currentUser) {
       return res.sendStatus(403);
     }
