@@ -1,9 +1,7 @@
-import * as chai from 'chai';
+import { expect } from 'chai';
 import server from '../../utils/server.mock';
 import User from '../../../app/models/user';
 import UserFactory from '../../factories/user.factory';
-
-const expect = chai.expect;
 
 const ENDPOINT = '/users';
 let defaultUserPayload = UserFactory.generate();

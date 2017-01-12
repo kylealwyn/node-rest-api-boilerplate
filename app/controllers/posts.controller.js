@@ -2,8 +2,11 @@ import BaseController from './base.controller';
 import Post from '../models/post';
 
 class PostController extends BaseController {
+
+  whitelist = ['text']
+
    // Middleware to populate post based on url param
-  _populate(req, res, next) {
+  _populate = (req, res, next) => {
     Post.findById(req.params.postId)
       .then((post) => {
         if (!post) {
@@ -13,7 +16,11 @@ class PostController extends BaseController {
         req.post = post;
         next();
       })
-      .catch(() => res.sendStatus(400));
+      .catch((err) => {
+        // CastError means we could not cast the param id to an objectId
+        const status = err.name === 'CastError' ? 404 : 500;
+        res.sendStatus(status);
+      });
   }
 
   search = (req, res) => {
@@ -32,7 +39,7 @@ class PostController extends BaseController {
    * req.post is populated by middleware in routes.js
    */
 
-  fetch(req, res) {
+  fetch = (req, res) => {
     res.json(req.post);
   }
 
@@ -40,20 +47,27 @@ class PostController extends BaseController {
    * req.user is populated by middleware in routes.js
    */
 
-  create(req, res) {
-    const post = new Post(req.body);
+  create = (req, res) => {
+    const params = this.filterParams(req.body, this.whitelist);
+
+    const post = new Post(params);
     post._user = req.currentUser._id;
+
     post.save()
       .then((p) => {
-        res.json(p);
+        res.status(201).json(p);
       })
       .catch((err) => {
         res.status(400).json(this.formatApiError(err));
       });
   }
 
-  delete(req, res) {
-    // toString is necessary to convert ObjectIDs to normal Strings
+  delete = (req, res) => {
+    /**
+     * Ensure the user attempting to delete the post owns the post
+     *
+     * ~~ toString() converts objectIds to normal strings
+     */
     if (req.post._user.toString() === req.currentUser._id.toString()) {
       req.post.remove()
         .then(() => {

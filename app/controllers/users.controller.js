@@ -2,6 +2,7 @@ import BaseController from './base.controller';
 import User from '../models/user';
 
 class UsersController extends BaseController {
+
   whitelist = ['firstname', 'lastname', 'email', 'username', 'password']
 
   _populate = (req, res, next) => {
