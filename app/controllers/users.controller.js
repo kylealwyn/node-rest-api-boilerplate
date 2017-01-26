@@ -3,7 +3,13 @@ import User from '../models/user';
 
 class UsersController extends BaseController {
 
-  whitelist = ['firstname', 'lastname', 'email', 'username', 'password']
+  whitelist = [
+    'firstname',
+    'lastname',
+    'email',
+    'username',
+    'password'
+  ];
 
   _populate = async (req, res, next) => {
     const { username } = req.params;
@@ -12,22 +18,24 @@ class UsersController extends BaseController {
       const user = await User.findOne({ username });
 
       if (!user) {
-        return res.status(404).json({ message: 'User not found.' });
+        const err = new Error('User not found.');
+        err.status = 404;
+        return next(err);
       }
 
       req.user = user;
       next();
     } catch(err) {
-      res.status(400).json(this.formatApiError(err));
+      next(err);
     }
   }
 
-  search = async (req, res) => {
+  search = async (req, res, next) => {
     try {
-      const users = await User.find({});
-      res.json(users);
+      // @TODO Add pagination
+      res.json(await User.find());
     } catch(err) {
-      res.status(400).json(this.formatApiError(err));
+      next(err);
     }
   }
 
@@ -41,40 +49,36 @@ class UsersController extends BaseController {
     res.json(user);
   }
 
-  create = async (req, res) => {
+  create = async (req, res, next) => {
     const params = this.filterParams(req.body, this.whitelist);
 
-    let user = new User({
+    let newUser = new User({
       ...params,
       provider: 'local',
     });
 
     try {
-      user = await user.save();
-      const token = user.generateToken();
+      const savedUser = await newUser.save();
+      const token = savedUser.generateToken();
       res.status(201).json({ token });
     } catch(err) {
-      res.status(400).json(this.formatApiError(err));
+      err.status = 400;
+      next(err);
     }
   }
 
-  update = async (req, res) => {
-    if (!req.currentUser) {
-      return res.sendStatus(403);
-    }
-
-    const attrs = this.filterParams(req.body, this.whitelist);
-    const user = Object.assign({}, req.currentUser, attrs);
+  update = async (req, res, next) => {
+    const newAttributes = this.filterParams(req.body, this.whitelist);
+    const updatedUser = Object.assign({}, req.currentUser, newAttributes);
 
     try {
-      await user.save();
-      res.sendStatus(204);
+      res.status(200).json(await updatedUser.save());
     } catch (err) {
-      res.status(400).json(this.formatApiError(err));
+      next(err)
     }
   }
 
-  delete = async (req, res) => {
+  delete = async (req, res, next) => {
     if (!req.currentUser) {
       return res.sendStatus(403);
     }
@@ -83,7 +87,7 @@ class UsersController extends BaseController {
       await req.currentUser.remove();
       res.sendStatus(204);
     } catch(err) {
-      res.status(400).json(this.formatApiError(err));
+      next(err);
     }
   }
 }

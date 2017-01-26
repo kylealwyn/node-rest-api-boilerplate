@@ -2,22 +2,22 @@ import BaseController from './base.controller';
 import User from '../models/user';
 
 class AuthController extends BaseController {
-  login = async (req, res) => {
+  login = async (req, res, next) => {
     const { username, password } = req.body;
 
     try {
       const user = await User.findOne({ username });
 
       if (!user || !user.authenticate(password)) {
-        return res.status(401).json({
-          message: 'Please verify your credentials.',
-        });
+        const err = new Error('Please verify your credentials.');
+        err.status = 401;
+        return next(err);
       }
 
       const token = user.generateToken();
       return res.status(200).json({ token });
-    } catch (error) {
-      res.status(500).json(this.formatApiError(error));
+    } catch (err) {
+      next(err);
     }
   }
 }
