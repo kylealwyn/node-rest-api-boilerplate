@@ -37,7 +37,6 @@
     "body-parser": "^1.15.2",
     "cors": "^2.8.1",
     "dotenv": "^4.0.0",
-    "errorhandler": "^1.4.3",
     "express": "^4.14.0",
     "helmet": "^3.1.0",
     "jsonwebtoken": "^7.1.0",

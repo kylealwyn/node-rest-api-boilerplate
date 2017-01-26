@@ -40,12 +40,6 @@ app.use('/public', express.static(`${__dirname}/public`));
 // Mount API routes
 app.use(Constants.apiPrefix, routes);
 
-// Send stack traces in development
-// https://github.com/expressjs/errorhandler
-if (Constants.envs.development) {
-  app.use(errorHandler());
-}
-
 app.listen(Constants.port, () => {
   // eslint-disable-next-line no-console
   console.log(`
