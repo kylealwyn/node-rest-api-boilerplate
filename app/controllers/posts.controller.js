@@ -3,36 +3,41 @@ import Post from '../models/post';
 
 class PostController extends BaseController {
 
-  whitelist = ['text']
+  whitelist = [
+    'text',
+  ];
 
    // Middleware to populate post based on url param
-  _populate = (req, res, next) => {
-    Post.findById(req.params.postId)
-      .then((post) => {
-        if (!post) {
-          return res.status(404).json({ message: 'Post not found.' });
-        }
+  _populate = async (req, res, next) => {
+    const { id } = req.params;
 
-        req.post = post;
-        next();
-      })
-      .catch((err) => {
-        // CastError means we could not cast the param id to an objectId
-        const status = err.name === 'CastError' ? 404 : 500;
-        res.sendStatus(status);
-      });
+    try {
+      const post = await Post.findById(id);
+
+      if (!post) {
+        const err = new Error('Post not found.');
+        err.status = 404;
+        return next(err);
+      }
+
+      req.post = post;
+      next();
+    } catch(err) {
+      err.status = err.name ==='CastError' ? 404 : 500;
+      next(err);
+    }
   }
 
-  search = (req, res) => {
-    Post
-      .find({})
-      .populate({ path: '_user', select: '-posts -role' })
-      .then((posts) => {
-        res.status(200).json(posts);
-      })
-      .catch((err) => {
-        res.status(500).json(this.formatApiError(err));
-      });
+  search = async (req, res, next) => {
+    try {
+      const posts =
+        await Post.find({})
+                  .populate({ path: '_user', select: '-posts -role' });
+
+      res.json(posts);
+    } catch(err) {
+      next(err);
+    }
   }
 
   /**
@@ -47,35 +52,34 @@ class PostController extends BaseController {
    * req.user is populated by middleware in routes.js
    */
 
-  create = (req, res) => {
+  create = async (req, res, next) => {
     const params = this.filterParams(req.body, this.whitelist);
 
-    const post = new Post(params);
-    post._user = req.currentUser._id;
+    const post = new Post({
+      ...params,
+      _user: req.currentUser._id,
+    });
 
-    post.save()
-      .then((p) => {
-        res.status(201).json(p);
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
+    try {
+      res.status(201).json(await post.save());
+    } catch(err) {
+      next(err);
+    }
   }
 
-  delete = (req, res) => {
+  delete = async (req, res, next) => {
     /**
      * Ensure the user attempting to delete the post owns the post
      *
      * ~~ toString() converts objectIds to normal strings
      */
     if (req.post._user.toString() === req.currentUser._id.toString()) {
-      req.post.remove()
-        .then(() => {
-          res.sendStatus(204);
-        })
-        .catch(() => {
-          res.sendStatus(500);
-        });
+      try {
+        await req.post.remove();
+        res.sendStatus(204);
+      } catch(err) {
+        next(err);
+      }
     } else {
       res.sendStatus(403);
     }

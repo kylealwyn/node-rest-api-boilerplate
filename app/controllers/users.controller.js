@@ -3,37 +3,44 @@ import User from '../models/user';
 
 class UsersController extends BaseController {
 
-  whitelist = ['firstname', 'lastname', 'email', 'username', 'password']
+  whitelist = [
+    'firstname',
+    'lastname',
+    'email',
+    'username',
+    'password',
+  ];
 
-  _populate = (req, res, next) => {
+  _populate = async (req, res, next) => {
     const { username } = req.params;
 
-    User.findOne({ username })
-      .then((user) => {
-        if (!user) {
-          return res.status(404).json({ message: 'User not found.' });
-        }
+    try {
+      const user = await User.findOne({ username });
 
-        req.user = user;
-        next();
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
+      if (!user) {
+        const err = new Error('User not found.');
+        err.status = 404;
+        return next(err);
+      }
+
+      req.user = user;
+      next();
+    } catch(err) {
+      next(err);
+    }
   }
 
-  search = (req, res) => {
-    User.find({})
-      .then((users) => {
-        res.json(users);
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
+  search = async (req, res, next) => {
+    try {
+      // @TODO Add pagination
+      res.json(await User.find());
+    } catch(err) {
+      next(err);
+    }
   }
 
   fetch = (req, res) => {
-    let user = req.user || req.currentUser;
+    const user = req.user || req.currentUser;
 
     if (!user) {
       return res.sendStatus(404);
@@ -42,50 +49,46 @@ class UsersController extends BaseController {
     res.json(user);
   }
 
-  create = (req, res) => {
+  create = async (req, res, next) => {
     const params = this.filterParams(req.body, this.whitelist);
 
-    const newUser = new User(params);
-    newUser.provider = 'local';
-    newUser.save()
-      .then((savedUser) => {
-        const token = savedUser.generateToken();
-        res.status(201).json({ token });
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
+    let newUser = new User({
+      ...params,
+      provider: 'local',
+    });
+
+    try {
+      const savedUser = await newUser.save();
+      const token = savedUser.generateToken();
+      res.status(201).json({ token });
+    } catch(err) {
+      err.status = 400;
+      next(err);
+    }
   }
 
-  update = (req, res) => {
+  update = async (req, res, next) => {
+    const newAttributes = this.filterParams(req.body, this.whitelist);
+    const updatedUser = Object.assign({}, req.currentUser, newAttributes);
+
+    try {
+      res.status(200).json(await updatedUser.save());
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  delete = async (req, res, next) => {
     if (!req.currentUser) {
       return res.sendStatus(403);
     }
 
-    const params = this.filterParams(req.body, this.whitelist);
-
-    const updated = Object.assign({}, req.currentUser, params);
-    updated.save()
-      .then(() => {
-        res.sendStatus(204);
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
-  }
-
-  delete = (req, res) => {
-    if (!req.currentUser) {
-      return res.sendStatus(403);
+    try {
+      await req.currentUser.remove();
+      res.sendStatus(204);
+    } catch(err) {
+      next(err);
     }
-
-    req.currentUser.remove()
-      .then(() => {
-        res.sendStatus(204);
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
   }
 }
 

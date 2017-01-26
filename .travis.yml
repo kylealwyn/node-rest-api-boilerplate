@@ -1,0 +1,16 @@
+language: node_js
+sudo: true
+node_js:
+  - "6"
+before_install:
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -q
+  - sudo apt-get install gcc-4.8 g++-4.8 -y
+env:
+  - TRAVIS=travis CXX=g++-4.8
+services:
+  - mongodb
+install:
+  - npm install
+script:
+  - npm test
