@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
-import errorHandler from 'errorhandler';
 import morgan from 'morgan';
 import helmet from 'helmet';
 

@@ -67,7 +67,7 @@ class PostController extends BaseController {
     }
   }
 
-  delete = async (req, res) => {
+  delete = async (req, res, next) => {
     /**
      * Ensure the user attempting to delete the post owns the post
      *

@@ -8,7 +8,7 @@ class UsersController extends BaseController {
     'lastname',
     'email',
     'username',
-    'password'
+    'password',
   ];
 
   _populate = async (req, res, next) => {
@@ -74,7 +74,7 @@ class UsersController extends BaseController {
     try {
       res.status(200).json(await updatedUser.save());
     } catch (err) {
-      next(err)
+      next(err);
     }
   }
 
