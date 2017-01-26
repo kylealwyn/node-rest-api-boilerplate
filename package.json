@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run clean && babel app -d build",
     "clean": "rm -rf build && mkdir build",
-    "start": "nodemon index.js",
+    "start": "nodemon",
     "test": "NODE_ENV=test mocha --recursive --reporter spec --compilers js:babel-register tests",
     "lint": "eslint app",
     "test:watch": "nodemon --exec 'npm run test' tests",
@@ -36,6 +36,7 @@
     "bcrypt": "^1.0.0",
     "body-parser": "^1.15.2",
     "cors": "^2.8.1",
+    "dotenv": "^4.0.0",
     "errorhandler": "^1.4.3",
     "express": "^4.14.0",
     "helmet": "^3.1.0",

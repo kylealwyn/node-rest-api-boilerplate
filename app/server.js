@@ -8,7 +8,6 @@ import helmet from 'helmet';
 
 import routes from './routes';
 import Constants from './config/constants';
-import './database';
 
 const app = express();
 
