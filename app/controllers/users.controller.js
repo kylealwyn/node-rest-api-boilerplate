@@ -5,35 +5,34 @@ class UsersController extends BaseController {
 
   whitelist = ['firstname', 'lastname', 'email', 'username', 'password']
 
-  _populate = (req, res, next) => {
+  _populate = async (req, res, next) => {
     const { username } = req.params;
 
-    User.findOne({ username })
-      .then((user) => {
-        if (!user) {
-          return res.status(404).json({ message: 'User not found.' });
-        }
+    try {
+      const user = await User.findOne({ username });
 
-        req.user = user;
-        next();
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+
+      req.user = user;
+      next();
+    } catch(err) {
+      res.status(400).json(this.formatApiError(err));
+    }
   }
 
-  search = (req, res) => {
-    User.find({})
-      .then((users) => {
-        res.json(users);
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
+  search = async (req, res) => {
+    try {
+      const users = await User.find({});
+      res.json(users);
+    } catch(err) {
+      res.status(400).json(this.formatApiError(err));
+    }
   }
 
   fetch = (req, res) => {
-    let user = req.user || req.currentUser;
+    const user = req.user || req.currentUser;
 
     if (!user) {
       return res.sendStatus(404);
@@ -42,50 +41,50 @@ class UsersController extends BaseController {
     res.json(user);
   }
 
-  create = (req, res) => {
+  create = async (req, res) => {
     const params = this.filterParams(req.body, this.whitelist);
 
-    const newUser = new User(params);
-    newUser.provider = 'local';
-    newUser.save()
-      .then((savedUser) => {
-        const token = savedUser.generateToken();
-        res.status(201).json({ token });
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
+    let user = new User({
+      ...params,
+      provider: 'local',
+    });
+
+    try {
+      user = await user.save();
+      const token = user.generateToken();
+      res.status(201).json({ token });
+    } catch(err) {
+      res.status(400).json(this.formatApiError(err));
+    }
   }
 
-  update = (req, res) => {
+  update = async (req, res) => {
     if (!req.currentUser) {
       return res.sendStatus(403);
     }
 
-    const params = this.filterParams(req.body, this.whitelist);
+    const attrs = this.filterParams(req.body, this.whitelist);
+    const user = Object.assign({}, req.currentUser, attrs);
 
-    const updated = Object.assign({}, req.currentUser, params);
-    updated.save()
-      .then(() => {
-        res.sendStatus(204);
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
+    try {
+      await user.save();
+      res.sendStatus(204);
+    } catch (err) {
+      res.status(400).json(this.formatApiError(err));
+    }
   }
 
-  delete = (req, res) => {
+  delete = async (req, res) => {
     if (!req.currentUser) {
       return res.sendStatus(403);
     }
 
-    req.currentUser.remove()
-      .then(() => {
-        res.sendStatus(204);
-      })
-      .catch((err) => {
-        res.status(400).json(this.formatApiError(err));
-      });
+    try {
+      await req.currentUser.remove();
+      res.sendStatus(204);
+    } catch(err) {
+      res.status(400).json(this.formatApiError(err));
+    }
   }
 }
 
