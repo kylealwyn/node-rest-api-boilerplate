@@ -1,5 +1,5 @@
 # Express & ES6 API Boilerplate
-
+[![Build Status](https://travis-ci.org/kylealwyn/node-rest-api-boilerplate.svg?branch=master)](https://travis-ci.org/kylealwyn/node-rest-api-boilerplate)
 > Tested on Node v6 and above
 
 ## Features
