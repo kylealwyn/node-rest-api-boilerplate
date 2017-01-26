@@ -1,5 +1,6 @@
 # Express & ES6 API Boilerplate
 
+> Tested on Node v6 and above
 
 ## Features
 - [x] ES6 for javascript awesomeness

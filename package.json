@@ -13,6 +13,10 @@
     "coverage": "NODE_ENV=test babel-node ./node_modules/.bin/isparta cover _mocha -- --recursive --reporter spec --compilers js:babel-register tests",
     "validate": "npm run test && npm outdated --depth 0"
   },
+  "engines": {
+    "node": ">= 6",
+    "npm": ">= 3"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/kylealwyn/node-rest-api-boilerplate.git"
