@@ -1,5 +1,5 @@
 import BaseController from './base.controller';
-import User from '../models/user';
+import User from '../models/user.model';
 
 class UsersController extends BaseController {
 
@@ -54,13 +54,13 @@ class UsersController extends BaseController {
 
     let newUser = new User({
       ...params,
-      provider: 'local',
     });
 
     try {
       const savedUser = await newUser.save();
-      const token = savedUser.generateToken();
-      res.status(201).json({ token });
+
+      // const token = savedUser.generateToken();
+      res.status(201).json(savedUser);
     } catch(err) {
       err.status = 400;
       next(err);
