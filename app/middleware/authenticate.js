@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/user';
+import User from '../models/user.model';
 import Constants from '../config/constants';
 
 const { sessionSecret } = Constants.security;
@@ -13,8 +13,9 @@ export default function authenticate(req, res, next) {
 
     // If token is decoded successfully, find user and attach to our request
     // for use in our route or other middleware
+    console.log(decoded);
     try {
-      const user = await User.findById(decoded._id);
+      const user = await User.where({ id: decoded.id }).fetch();
       if (!user) {
         return res.sendStatus(401);
       }

@@ -5,12 +5,18 @@ export default function errorHandler(err, req, res, next) {
     return res.sendStatus(500);
   }
 
+  const { message } = err;
+
+  if (message === 'EmptyResponse') {
+    return res.sendStatus(404);
+  }
+
   const error = {
-    message: err.message || 'Internal Server Error.',
+    message: message || 'Internal Server Error.',
   };
 
   if (Constants.envs.development) {
-    error.stack = err.stack;
+    console.log(err.stack); // eslint-disable-line no-console
   }
 
   if (err.errors) {

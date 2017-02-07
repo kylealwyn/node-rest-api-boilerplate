@@ -16,6 +16,7 @@
   "rules": {
     "strict": [2, "never"],
     "require-jsdoc": 0,
+    "valid-jsdoc": 0,
     "no-invalid-this": 0,
     "max-len": [1, 120],
     "object-curly-spacing": ["error", "always"],

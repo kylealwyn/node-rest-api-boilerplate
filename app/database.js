@@ -11,14 +11,13 @@
 // });
 
 import knex from 'knex';
+import bookshelf from 'bookshelf';
+import config from '../knexfile';
 
-export default knex({
-  client: 'mysql',
-  connection: {
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'root',
-    database: 'quickdoc_dev',
-  },
-  debug: true,
-});
+const Bookshelf = bookshelf(knex(config[process.env.NODE_ENV || 'development']));
+
+Bookshelf.plugin('registry');
+Bookshelf.plugin('visibility');
+Bookshelf.Model = require('./models/base.model').default(Bookshelf);
+
+export default Bookshelf;

@@ -12,18 +12,9 @@ class UsersController extends BaseController {
   ];
 
   _populate = async (req, res, next) => {
-    const { username } = req.params;
-
     try {
-      const user = await User.findOne({ username });
-
-      if (!user) {
-        const err = new Error('User not found.');
-        err.status = 404;
-        return next(err);
-      }
-
-      req.user = user;
+      const { username } = req.params;
+      req.user = await User.findOne({ username });
       next();
     } catch(err) {
       next(err);
@@ -32,8 +23,8 @@ class UsersController extends BaseController {
 
   search = async (req, res, next) => {
     try {
-      // @TODO Add pagination
-      res.json(await User.find());
+      const users = await User.findAll();
+      return res.json(users);
     } catch(err) {
       next(err);
     }
@@ -52,15 +43,14 @@ class UsersController extends BaseController {
   create = async (req, res, next) => {
     const params = this.filterParams(req.body, this.whitelist);
 
-    let newUser = new User({
-      ...params,
-    });
 
     try {
-      const savedUser = await newUser.save();
+      const user = await User.create({ ...params });
 
-      // const token = savedUser.generateToken();
-      res.status(201).json(savedUser);
+      return res.status(201).json({
+        user,
+        token: user.generateToken(),
+      });
     } catch(err) {
       err.status = 400;
       next(err);
@@ -68,11 +58,11 @@ class UsersController extends BaseController {
   }
 
   update = async (req, res, next) => {
-    const newAttributes = this.filterParams(req.body, this.whitelist);
-    const updatedUser = Object.assign({}, req.currentUser, newAttributes);
+    const attributes = this.filterParams(req.body, this.whitelist);
 
     try {
-      res.status(200).json(await updatedUser.save());
+      await req.currentUser.save(attributes, { patch: true });
+      res.status(200).json(req.currentUser);
     } catch (err) {
       next(err);
     }
@@ -84,7 +74,7 @@ class UsersController extends BaseController {
     }
 
     try {
-      await req.currentUser.remove();
+      await req.currentUser.destroy();
       res.sendStatus(204);
     } catch(err) {
       next(err);

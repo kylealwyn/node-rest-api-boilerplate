@@ -31,6 +31,12 @@ class BaseController {
 
 		return formatted;
 	}
+
+	generateError(message = 'Internal Server Error', status = 400) {
+		const error = new Error(message);
+		error.status = status;
+		return error;
+	}
 }
 
 export default BaseController;
