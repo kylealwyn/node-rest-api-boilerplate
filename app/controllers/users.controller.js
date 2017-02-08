@@ -1,33 +1,22 @@
 import BaseController from './base.controller';
-import User from '../models/user.model';
+import User from '../models/User';
 
 class UsersController extends BaseController {
 
-  whitelist = [
-    'firstname',
-    'lastname',
-    'email',
-    'username',
-    'password',
-  ];
-
   _populate = async (req, res, next) => {
-    try {
-      const { username } = req.params;
-      req.user = await User.findOne({ username });
-      next();
-    } catch(err) {
-      next(err);
+    const user = await User.query().findById(req.params.id);
+
+    if (!user) {
+      return res.sendStatus(404);
     }
+
+    req.user = user;
+    next();
   }
 
   search = async (req, res, next) => {
-    try {
-      const users = await User.findAll();
-      return res.json(users);
-    } catch(err) {
-      next(err);
-    }
+    const users = await User.query();
+    return res.json(users);
   }
 
   fetch = (req, res) => {
@@ -41,31 +30,26 @@ class UsersController extends BaseController {
   }
 
   create = async (req, res, next) => {
-    const params = this.filterParams(req.body, this.whitelist);
+    const user = await User
+      .query()
+      .insert(req.body);
 
-
-    try {
-      const user = await User.create({ ...params });
-
-      return res.status(201).json({
-        user,
-        token: user.generateToken(),
-      });
-    } catch(err) {
-      err.status = 400;
-      next(err);
-    }
+    return res.status(201).json({
+      user,
+      token: user.generateToken(),
+    });
   }
 
   update = async (req, res, next) => {
-    const attributes = this.filterParams(req.body, this.whitelist);
-
-    try {
-      await req.currentUser.save(attributes, { patch: true });
-      res.status(200).json(req.currentUser);
-    } catch (err) {
-      next(err);
+    if (!req.currentUser) {
+      return res.sendStatus(403);
     }
+
+    await req.currentUser
+      .$query()
+      .patch(req.body);
+
+    res.json(req.currentUser);
   }
 
   delete = async (req, res, next) => {
@@ -73,12 +57,8 @@ class UsersController extends BaseController {
       return res.sendStatus(403);
     }
 
-    try {
-      await req.currentUser.destroy();
-      res.sendStatus(204);
-    } catch(err) {
-      next(err);
-    }
+    await req.currentUser.destroy();
+    res.sendStatus(204);
   }
 }
 

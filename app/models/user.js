@@ -1,147 +1,109 @@
-import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import Post from './post';
+import Model from './Model';
 import Constants from '../config/constants';
+import { ValidationError } from 'objection';
 
-const Schema = mongoose.Schema;
-const UserSchema = new Schema({
-  firstname: String,
-  lastname: String,
-  username: {
-    type: String,
-    unique: true,
-    required: [true, 'Username is required.'],
-  },
-  email: {
-    type: String,
-    unique: true,
-    lowercase: true,
-    required: [true, 'Email is required'],
-    validate: {
-      validator(email) {
-        // eslint-disable-next-line max-len
-        const emailRegex = /^[-a-z0-9%S_+]+(\.[-a-z0-9%S_+]+)*@(?:[a-z0-9-]{1,63}\.){1,125}[a-z]{2,63}$/i;
-        return emailRegex.test(email);
-      },
-      message: '{VALUE} is not a valid email.',
+class User extends Model {
+  static tableName = 'users'
+  static hiddenFields = ['username', 'password', 'createdAt', 'updatedAt']
+  static hasTimestamps = true
+
+  static jsonSchema = {
+    type: 'object',
+    required: ['email', 'password'],
+
+    properties: {
+      id: { type: 'integer' },
+      firstName: { type: 'string', minLength: 1, maxLength: 255 },
+      lastName: { type: 'string', minLength: 1, maxLength: 255 },
+      email: { type: 'string' },
+      phone: { type: 'string' },
+      password: { type: 'string' },
+      createdAt: { type: 'string' },
+      updatedAt: { type: 'string' },
     },
-  },
-  password: {
-    type: String,
-    required: [true, 'Password is required.'],
-  },
-  role: {
-    type: String,
-    default: 'user',
-  },
-}, {
-  timestamps: true,
-});
+  }
 
-// Strip out password field when sending user object to client
-UserSchema.set('toJSON', {
-  virtuals: true,
-  transform(doc, obj) {
-    obj.id = obj._id;
-    delete obj._id;
-    delete obj.__v;
-    delete obj.password;
-    return obj;
-  },
-});
+  // static relationMappings = {
+  //   visits: {
+  //     relation: Model.HasManyRelation,
+  //     modelClass: `${__dirname}/Visit`,
+  //     join: {
+  //       from: 'user.id',
+  //       to: 'visit.userId',
+  //     },
+  //   },
+  // }
 
-// Ensure email has not been taken
-UserSchema
-  .path('email')
-  .validate((email, respond) => {
-    UserModel.findOne({ email })
-      .then((user) => {
-        respond(user ? false : true);
-      })
-      .catch(() => {
-        respond(false);
+  async $beforeInsert() {
+    await super.$beforeInsert();
+    await this.checkUniqueness(true);
+    await this.hashPassword(null, true);
+  }
+
+  async $beforeUpdate(opts) {
+    await super.$beforeUpdate();
+    await this.checkUniqueness(false);
+    await this.hashPassword(opts, false);
+  }
+
+  checkUniqueness(isInsert) {
+    return this.constructor
+      .query()
+      .select('id')
+      .where('email', this.email)
+      .first()
+      .then((row) => {
+        if (typeof row === 'object' && row.id) {
+          if (isInsert || Number.parseInt(row.id) !== Number.parseInt(this.id)) {
+            throw new ValidationError({
+              email: `${this.email} is already in use.`,
+            });
+          }
+        }
       });
-  }, 'Email already in use.');
-
-// Validate username is not taken
-UserSchema
-  .path('username')
-  .validate((username, respond) => {
-    UserModel.findOne({ username })
-      .then((user) => {
-        respond(user ? false : true);
-      })
-      .catch(() => {
-        respond(false);
-      });
-  }, 'Username already taken.');
-
-// Validate password field
-UserSchema
-  .path('password')
-  .validate(function(password) {
-    return password.length >= 6 && password.match(/\d+/g);
-  }, 'Password be at least 6 characters long and contain 1 number.');
-
-//
-UserSchema
-  .pre('save', function(done) {
-    // Encrypt password before saving the document
-    if (this.isModified('password')) {
-      const { saltRounds } = Constants.security;
-      this._hashPassword(this.password, saltRounds, (err, hash) => {
-        this.password = hash;
-        done();
-      });
-    } else {
-      done();
     }
-    // eslint-enable no-invalid-this
-  });
-
-/**
- * User Methods
- */
-UserSchema.methods = {
-  getPosts() {
-    return Post.find({ _user: this._id });
-  },
-
-  /**
-   * Authenticate - check if the passwords are the same
-   * @public
-   * @param {String} password
-   * @return {Boolean} passwords match
-   */
-  authenticate(password) {
-    return bcrypt.compareSync(password, this.password);
-  },
-
-  /**
-   * Generates a JSON Web token used for route authentication
-   * @public
-   * @return {String} signed JSON web token
-   */
-  generateToken() {
-    return jwt.sign({ _id: this._id }, Constants.security.sessionSecret, {
-      expiresIn: Constants.security.sessionExpiration,
-    });
-  },
 
   /**
    * Create password hash
-   * @private
-   * @param {String} password
-   * @param {Number} saltRounds
-   * @param {Function} callback
-   * @return {Boolean} passwords match
+   * @return {Promise}
    */
-  _hashPassword(password, saltRounds = Constants.security.saltRounds, callback) {
-    return bcrypt.hash(password, saltRounds, callback);
-  },
-};
+  hashPassword(opts = {}, isInsert) {
+    return new Promise((resolve, reject) => {
+      if (isInsert || this.password) {
+        bcrypt.hash(this.password, 4, (err, hash) => {
+          if (err) {
+            return reject(err);
+          }
 
-const UserModel = mongoose.model('User', UserSchema);
+          this.password = hash;
+          resolve();
+        });
+      } else {
+        resolve();
+      }
+    });
+  }
 
-export default UserModel;
+  /**
+   * Authenticates user
+   * @param {String} password to check
+   * @return {Boolean} whether passwords match
+   */
+  authenticate(password) {
+    return bcrypt.compareSync(password, this.password);
+  }
+
+  /**
+   * Generates a JSON Web token used for route authentication
+   * @return {String} signed JSON web token
+   */
+  generateToken() {
+    return jwt.sign({ id: this.id }, Constants.security.sessionSecret, {
+      expiresIn: Constants.security.sessionExpiration,
+    });
+  }
+}
+
+export default User;

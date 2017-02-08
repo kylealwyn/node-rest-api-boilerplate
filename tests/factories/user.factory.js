@@ -2,7 +2,7 @@ import faker from 'faker';
 
 class UserFactory {
   generateList(count, attrs = {}) {
-    let list = []
+    let list = [];
     while(count) {
       list.push(this.generate(attrs));
       count--;
@@ -12,12 +12,10 @@ class UserFactory {
 
   generate(attrs) {
     return Object.assign({}, {
-      firstname: faker.name.firstName(),
-      lastname: faker.name.lastName(),
-      username: faker.internet.userName(),
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
       email: faker.internet.email(),
       password: 'password1',
-      role: 'user'
     }, attrs);
   }
 }

@@ -1,5 +1,5 @@
 import BaseController from './base.controller';
-import User from '../models/user.model';
+import User from '../models/User';
 
 class AuthController extends BaseController {
   login = async (req, res, next) => {
@@ -10,7 +10,7 @@ class AuthController extends BaseController {
         throw this.generateError('You must provide an email and password.', 400);
       }
 
-      const user = await User.findOne({ email }, { require: false });
+      const [user] = await User.query().where({ email });
 
       if (!user || !user.authenticate(password)) {
         const err = new Error('Please verify your credentials.');

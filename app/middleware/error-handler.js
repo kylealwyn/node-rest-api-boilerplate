@@ -29,5 +29,8 @@ export default function errorHandler(err, req, res, next) {
     }
   }
 
-  res.status(err.status || 500).json(error);
+  res.status(err.statusCode || 500).json({
+    ...error,
+    data: err.data,
+  });
 }

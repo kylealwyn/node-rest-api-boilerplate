@@ -8,10 +8,9 @@ let defaultUserPayload = UserFactory.generate();
 let savedUser;
 
 describe(`POST ${ENDPOINT}`, () => {
-  before(() => {
-    return User.remove({})
-      .then(() => User.create(defaultUserPayload))
-      .then(u => savedUser = u);
+  before(async () => {
+    await User.query().del();
+    savedUser = await User.query().insert(defaultUserPayload);
   });
 
   beforeEach(() => {
@@ -19,45 +18,47 @@ describe(`POST ${ENDPOINT}`, () => {
   });
 
   describe('#201', () => {
-    it('return an auth token upon creation', done => {
-      server.post(ENDPOINT)
-        .send(UserFactory.generate({username: 'newusername', email: 'newemail@gmail.com'}))
-        .end((err, res) => {
-          expect(res).to.have.status(201);
+    it('return an auth token upon creation', () => {
+      const payload = UserFactory.generate({ email: 'newemail@gmail.com' });
+
+      return server
+        .post(ENDPOINT)
+        .send(payload)
+        .expect(201)
+        .then((res) => {
           expect(res.body.token).to.be.defined;
-          done();
+          expect(res.body.user).to.be.defined;
+          expect(res.body.user.email).to.equal(payload.email);
         });
     });
   });
 
   describe('#400', () => {
-    it('requires unique email and username', done => {
-      server.post(ENDPOINT)
-        .send(savedUser.toJSON())
-        .end((err, res) => {
-          expect(res).to.have.status(400);
-          expect(res.body.errors).to.be.defined;
-          expect(res.body.errors.email).to.equal('Email already in use.');
-          expect(res.body.errors.username).to.equal('Username already taken.');
-          done();
+    it('requires a unique email', () => {
+      const payload = UserFactory.generate({ email: savedUser.email });
+
+      return server
+        .post(ENDPOINT)
+        .send(payload)
+        .expect(400, {
+          email: `${savedUser.email} is already in use.`,
         });
     });
 
-    it('requires a password', done => {
+    it('requires a password', () => {
       delete defaultUserPayload.password;
-      server.post(ENDPOINT)
+
+      return server
+        .post(ENDPOINT)
         .send(defaultUserPayload)
-        .end((err, res) => {
-          expect(res).to.have.status(400);
-          expect(res.body.errors).to.be.defined;
-          expect(res.body.errors.password).to.equal('Password is required.');
-          done();
+        .expect(400, {
+          password: `should have required property 'password'`,
         });
     });
 
-    it('requires a strong password', done => {
+    xit('requires a strong password', (done) => {
       server.post(ENDPOINT)
-        .send(UserFactory.generate({password: 'short'}))
+        .send(UserFactory.generate({ password: 'short' }))
         .end((err, res) => {
           expect(res).to.have.status(400);
           expect(res.body.errors).to.be.defined;

@@ -1,8 +1,8 @@
 import faker from 'faker';
 
-class PostFactory {
+class ServiceFactory {
   generateList(count, attrs = {}) {
-    let list = []
+    let list = [];
     while(count) {
       list.push(this.generate(attrs));
       count--;
@@ -12,9 +12,11 @@ class PostFactory {
 
   generate(attrs) {
     return Object.assign({}, {
-      text: faker.lorem.sentence()
+      name: faker.random.words(),
+      code: faker.address.countryCode(),
+      description: faker.lorem.sentence(),
     }, attrs);
   }
 }
 
-export default new PostFactory();
+export default new ServiceFactory();

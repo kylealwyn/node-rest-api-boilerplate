@@ -1,5 +1,5 @@
 import BaseController from './base.controller';
-import Post from '../models/post';
+import Post from '../models/Service';
 
 class PostController extends BaseController {
 

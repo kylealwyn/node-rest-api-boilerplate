@@ -1,7 +1,5 @@
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import server from '../../app/server';
+import supertest from 'supertest';
 import '../../app/database';
+import app from '../../app/server';
 
-chai.use(chaiHttp);
-export default chai.request(server);
+export default supertest(app);

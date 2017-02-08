@@ -10,14 +10,8 @@
 //   throw err;
 // });
 
+const objection = require('objection');
 import knex from 'knex';
-import bookshelf from 'bookshelf';
 import config from '../knexfile';
 
-const Bookshelf = bookshelf(knex(config[process.env.NODE_ENV || 'development']));
-
-Bookshelf.plugin('registry');
-Bookshelf.plugin('visibility');
-Bookshelf.Model = require('./models/base.model').default(Bookshelf);
-
-export default Bookshelf;
+objection.Model.knex(knex(config[process.env.NODE_ENV || 'development']));
