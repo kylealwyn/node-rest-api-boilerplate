@@ -1,30 +1,28 @@
 import BaseController from './base.controller';
 import User from '../models/User';
+import { Unauthorized, BadRequest } from '../lib/http-errors';
 
 class AuthController extends BaseController {
   login = async (req, res, next) => {
     const { email, password } = req.body;
 
-    try {
-      if (!email || !password) {
-        throw this.generateError('You must provide an email and password.', 400);
-      }
-
-      const [user] = await User.query().where({ email });
-
-      if (!user || !user.authenticate(password)) {
-        const err = new Error('Please verify your credentials.');
-        err.status = 401;
-        return next(err);
-      }
-
-      return res.status(200).json({
-        user,
-        token: user.generateToken(),
-      });
-    } catch (err) {
-      next(err);
+    if (!email || !password) {
+      throw new BadRequest('You must provide an email and password.');
     }
+
+    const user = await User
+      .query()
+      .where({ email })
+      .first();
+
+    if (!user || !user.authenticate(password)) {
+      throw new Unauthorized();
+    }
+
+    return res.status(200).json({
+      user,
+      token: user.generateToken(),
+    });
   }
 }
 

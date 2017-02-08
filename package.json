@@ -49,6 +49,7 @@
     "dotenv": "^4.0.0",
     "express": "^4.14.0",
     "helmet": "^3.1.0",
+    "http-status": "^1.0.1",
     "jsonwebtoken": "^7.1.0",
     "knex": "^0.12.6",
     "lodash": "^4.17.4",
