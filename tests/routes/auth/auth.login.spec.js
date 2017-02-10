@@ -24,7 +24,10 @@ describe(`POST ${ENDPOINT}`, () => {
     it('return an auth token upon successful password verification', () => {
       return server
         .post(ENDPOINT)
-        .send({ email: savedUser.email, password: defaultPayload.password })
+        .send({
+          email: savedUser.email,
+          password: defaultPayload.password,
+        })
         .expect(200)
         .then((res) => {
           expect(res.body.token).to.be.defined;
@@ -38,15 +41,9 @@ describe(`POST ${ENDPOINT}`, () => {
 
       return server
         .post(ENDPOINT)
-        .expect(400, 'You must provide an email and password.');
-    });
-
-    it('must have a password present', () => {
-      delete defaultPayload.password;
-
-      return server
-        .post(ENDPOINT)
-        .expect(400, 'You must provide an email and password.');
+        .expect(400, {
+          message: 'You must provide an email and password.',
+        });
     });
   });
 
@@ -54,14 +51,20 @@ describe(`POST ${ENDPOINT}`, () => {
     it('correct username, incorrect password', () => {
       return server
         .post(ENDPOINT)
-        .send({ email: savedUser.email, password: 'wrong' })
+        .send({
+          email: savedUser.email,
+          password: 'wrong',
+        })
         .expect(401);
     });
 
     it('incorrect username, incorrect password', () => {
       return server
         .post(ENDPOINT)
-        .send({ email: 'wrong', password: 'wrong' })
+        .send({
+          email: 'wrong',
+          password: 'wrong',
+        })
         .expect(401);
     });
   });

@@ -41,7 +41,10 @@ describe(`POST ${ENDPOINT}`, () => {
         .post(ENDPOINT)
         .send(payload)
         .expect(400, {
-          email: `${savedUser.email} is already in use.`,
+          message: 'Something went wrong.',
+          errors: {
+            email: `${savedUser.email} is already in use.`,
+          },
         });
     });
 
@@ -52,7 +55,10 @@ describe(`POST ${ENDPOINT}`, () => {
         .post(ENDPOINT)
         .send(defaultUserPayload)
         .expect(400, {
-          password: `should have required property 'password'`,
+          message: 'Something went wrong.',
+          errors: {
+            password: 'is required',
+          },
         });
     });
 

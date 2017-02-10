@@ -1,9 +1,8 @@
-import BaseController from './base.controller';
 import User from '../models/User';
-import { Unauthorized, BadRequest } from '../lib/http-errors';
+import { Unauthorized, BadRequest } from '../lib/errors';
 
-class AuthController extends BaseController {
-  login = async (req, res, next) => {
+class AuthController {
+  async login(req, res, next) {
     const { email, password } = req.body;
 
     if (!email || !password) {

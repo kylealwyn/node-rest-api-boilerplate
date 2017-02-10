@@ -10,7 +10,4 @@ exports.up = (knex) =>
     }]);
 
 exports.down = (knex) =>
-  knex('services')
-    .where('code', 'OCP')
-    .orWhere('code', 'ED')
-    .del();
+  knex('services').del();

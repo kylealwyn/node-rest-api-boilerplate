@@ -1,5 +1,5 @@
-import server from '../utils/server.mock';
-import constants from '../../app/config/constants';
+import server from '../../utils/server.mock';
+import constants from '../../../app/config/constants';
 
 describe('GET /', () => {
   describe('#200', () => {

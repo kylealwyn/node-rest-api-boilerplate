@@ -1,35 +1,18 @@
-import BaseController from './base.controller';
 import User from '../models/User';
+import { NotFound } from '../lib/errors';
 
-class UsersController extends BaseController {
-
-  _populate = async (req, res, next) => {
-    const user = await User.query().findById(req.params.id);
-
-    if (!user) {
-      return res.sendStatus(404);
-    }
-
-    req.user = user;
-    next();
-  }
-
-  search = async (req, res, next) => {
-    const users = await User.query();
-    return res.json(users);
-  }
-
-  fetch = (req, res) => {
+class UsersController {
+  fetch(req, res) {
     const user = req.user || req.currentUser;
 
     if (!user) {
-      return res.sendStatus(404);
+      throw new NotFound();
     }
 
     res.json(user);
   }
 
-  create = async (req, res, next) => {
+  async create(req, res, next) {
     const user = await User
       .query()
       .insert(req.body);
@@ -40,11 +23,7 @@ class UsersController extends BaseController {
     });
   }
 
-  update = async (req, res, next) => {
-    if (!req.currentUser) {
-      return res.sendStatus(403);
-    }
-
+  async update(req, res, next) {
     await req.currentUser
       .$query()
       .patch(req.body);
@@ -52,11 +31,7 @@ class UsersController extends BaseController {
     res.json(req.currentUser);
   }
 
-  delete = async (req, res, next) => {
-    if (!req.currentUser) {
-      return res.sendStatus(403);
-    }
-
+  async delete(req, res, next) {
     await req.currentUser.destroy();
     res.sendStatus(204);
   }

@@ -1,7 +1,6 @@
-import BaseController from './base.controller';
 import Constants from '../config/constants';
 
-class MetaController extends BaseController {
+class MetaController {
   index(req, res) {
 		res.json({
 			version: Constants.version,

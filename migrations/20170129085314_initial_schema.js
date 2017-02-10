@@ -19,9 +19,22 @@ exports.up = (knex) =>
         t.string('name').notNullable();
         t.string('code').index().unique().notNullable();
         t.text('description');
-        t.integer('minAge');
+        t.integer('minAge').defaultTo(18);
         t.integer('maxAge');
         t.enu('genders', ['male', 'female', 'all']);
+      })
+
+      .createTable('content', (t) => {
+        t.increments('id').primary();
+
+        t.string('name').notNullable();
+        t.string('code').index().unique().notNullable();
+        t.text('appContent', 'longtext');
+        t.text('webContent', 'longtext');
+
+        t.dateTime('effectiveAt');
+        t.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
+        t.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
       })
 
       .createTable('medications', (t) => {
@@ -38,18 +51,22 @@ exports.up = (knex) =>
       .createTable('states', (t) => {
         t.increments('id').primary();
 
-        t.string('longName');
-        t.string('shortName').index().unique();
+        t.string('name');
+        t.string('code').index().unique();
       })
 
-      .createTable('services_medications', (t) => {
-        t.integer('serviceId').unsigned().references('services.id').onDelete('CASCADE');
-        t.integer('medicationId').unsigned().references('medications.id').onDelete('CASCADE');
-      })
+      .createTable('tasks', (t) => {
+        t.increments('id').primary();
 
-      .createTable('services_states', (t) => {
-        t.integer('serviceId').unsigned().references('services.id').onDelete('CASCADE');
-        t.integer('stateId').unsigned().references('states.id').onDelete('CASCADE');
+        t.string('title').notNullable();
+        t.text('description');
+        t.string('code').notNullable();
+        t.string('type').notNullable();
+        t.integer('position');
+        t.string('button');
+
+        t.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
+        t.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
       })
 
       .createTable('visits', (t) => {
@@ -64,12 +81,41 @@ exports.up = (knex) =>
         t.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
       })
 
+      .createTable('services_medications', (t) => {
+        t.integer('serviceId').unsigned().references('services.id').onDelete('CASCADE');
+        t.integer('medicationId').unsigned().references('medications.id').onDelete('CASCADE');
+      })
+
+      .createTable('services_states', (t) => {
+        t.integer('serviceId').unsigned().references('services.id').onDelete('CASCADE');
+        t.integer('stateId').unsigned().references('states.id').onDelete('CASCADE');
+        t.boolean('requiresVideo').defaultTo(false);
+      })
+
+      // .createTable('services_tasks', (t) => {
+      //   t.integer('serviceId').unsigned().references('services.id').onDelete('CASCADE');
+      //   t.integer('stateId').unsigned().references('tasks.id').onDelete('CASCADE');
+      //   t.integer('position').notNullable();
+      // })
+
+      .createTable('visits_tasks', (t) => {
+        t.increments('id').primary();
+
+        t.integer('visitId').unsigned().references('visits.id');
+        t.integer('taskId').unsigned().references('tasks.id');
+        t.integer('status');
+
+        t.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
+        t.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
+      })
+
       .createTable('messages', (t) => {
         t.increments('id').primary();
 
         t.integer('fromId').unsigned().references('users.id');
         t.integer('toId').unsigned().references('users.id');
         t.text('content');
+
         t.dateTime('readAt');
         t.dateTime('sentAt');
       });
@@ -77,10 +123,14 @@ exports.up = (knex) =>
 exports.down = (knex) =>
     knex.schema
       .dropTableIfExists('messages')
-      .dropTableIfExists('visits')
+      .dropTableIfExists('visits_tasks')
       .dropTableIfExists('services_states')
       .dropTableIfExists('services_medications')
+      // .dropTableIfExists('services_tasks')
+      .dropTableIfExists('visits')
       .dropTableIfExists('medications')
+      .dropTableIfExists('tasks')
       .dropTableIfExists('states')
+      .dropTableIfExists('content')
       .dropTableIfExists('services')
       .dropTableIfExists('users');

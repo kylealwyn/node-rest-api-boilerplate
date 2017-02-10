@@ -2,74 +2,77 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Model from './Model';
 import Constants from '../config/constants';
-import { ValidationError } from 'objection';
+import { BadRequest } from '../lib/errors';
+import isEmail from 'validator/lib/isEmail';
 
 class User extends Model {
   static tableName = 'users'
   static hiddenFields = ['username', 'password', 'createdAt', 'updatedAt']
   static hasTimestamps = true
 
-  static jsonSchema = {
-    type: 'object',
-    required: ['email', 'password'],
-
-    properties: {
-      id: { type: 'integer' },
-      firstName: { type: 'string', minLength: 1, maxLength: 255 },
-      lastName: { type: 'string', minLength: 1, maxLength: 255 },
-      email: { type: 'string' },
-      phone: { type: 'string' },
-      password: { type: 'string' },
-      createdAt: { type: 'string' },
-      updatedAt: { type: 'string' },
+  static schema = {
+    id: {},
+    firstName: {
+      message: '{VALUE} is not a valid firstname. It must be a string.',
+      required: true,
+      validator(name) {
+        return typeof name === 'string';
+      },
     },
-  }
-
-  // static relationMappings = {
-  //   visits: {
-  //     relation: Model.HasManyRelation,
-  //     modelClass: `${__dirname}/Visit`,
-  //     join: {
-  //       from: 'user.id',
-  //       to: 'visit.userId',
-  //     },
-  //   },
-  // }
-
-  async $beforeInsert() {
-    await super.$beforeInsert();
-    await this.checkUniqueness(true);
-    await this.hashPassword(null, true);
-  }
-
-  async $beforeUpdate(opts) {
-    await super.$beforeUpdate();
-    await this.checkUniqueness(false);
-    await this.hashPassword(opts, false);
-  }
-
-  checkUniqueness(isInsert) {
-    return this.constructor
-      .query()
-      .select('id')
-      .where('email', this.email)
-      .first()
-      .then((row) => {
-        if (typeof row === 'object' && row.id) {
-          if (isInsert || Number.parseInt(row.id) !== Number.parseInt(this.id)) {
-            throw new ValidationError({
-              email: `${this.email} is already in use.`,
-            });
-          }
+    lastName: {
+      required: true,
+    },
+    email: {
+      required: true,
+      async validator(email, options) {
+        if (!isEmail(email)) {
+          throw new BadRequest({
+            email: `${email} is not a valid email.`,
+          });
         }
-      });
-    }
+
+        return this.constructor
+          .query()
+          .select('id')
+          .where('email', email)
+          .first()
+          .then((row) => {
+            if (typeof row === 'object' && row.id) {
+              if (options.inserting || Number.parseInt(row.id) !== Number.parseInt(this.id)) {
+                throw new BadRequest({
+                  email: `${email} is already in use.`,
+                });
+              }
+            }
+          });
+      },
+    },
+    password: {
+      required: true,
+      validator(password = '') {
+        return password.length >= 6;
+      },
+    },
+    createdAt: {},
+    updatedAt: {},
+  }
+
+  async $beforeInsert(options) {
+    await super.$beforeInsert(options);
+    await this.hashPassword(options, true);
+  }
+
+  async $beforeUpdate(options) {
+    await super.$beforeUpdate(options);
+    await this.hashPassword(options, false);
+  }
+
 
   /**
    * Create password hash
    * @return {Promise}
    */
-  hashPassword(opts = {}, isInsert) {
+  hashPassword(options = {}, isInsert) {
     return new Promise((resolve, reject) => {
       if (isInsert || this.password) {
         bcrypt.hash(this.password, 4, (err, hash) => {

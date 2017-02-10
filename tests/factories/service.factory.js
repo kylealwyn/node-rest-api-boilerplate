@@ -13,7 +13,7 @@ class ServiceFactory {
   generate(attrs) {
     return Object.assign({}, {
       name: faker.random.words(),
-      code: faker.address.countryCode(),
+      code: faker.address.zipCode(),
       description: faker.lorem.sentence(),
     }, attrs);
   }

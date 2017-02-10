@@ -1,7 +1,6 @@
-import BaseController from './base.controller';
 import Service from '../models/Service';
 
-class ServicesController extends BaseController {
+class ServicesController {
   async search(req, res) {
     const services = await Service.query();
 
