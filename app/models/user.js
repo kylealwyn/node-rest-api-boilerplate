@@ -10,6 +10,17 @@ class User extends Model {
   static hiddenFields = ['username', 'password', 'createdAt', 'updatedAt']
   static hasTimestamps = true
 
+  static relationMappings = {
+    visits: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/Visit`,
+      join: {
+        from: 'users.id',
+        to: 'visits.userId',
+      },
+    },
+  }
+
   static schema = {
     id: {},
     firstName: {

@@ -21,6 +21,7 @@ exports.up = (knex) =>
         t.text('description');
         t.integer('minAge').defaultTo(18);
         t.integer('maxAge');
+        t.boolean('isChoosable').defaultTo(false);
         t.enu('genders', ['male', 'female', 'all']);
       })
 
@@ -42,10 +43,21 @@ exports.up = (knex) =>
 
         t.string('name').index();
         t.string('code').index().unique();
-        t.string('sku', 10).index().unique();
 
         t.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
         t.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
+      })
+
+      .createTable('products', (t) => {
+        t.increments('id').primary();
+
+        t.string('displayName');
+        t.integer('amount');
+        t.string('sku', 10).index().unique();
+        t.integer('quantity').notNullable().defaultTo(1);
+        t.string('dosage');
+
+        t.integer('medicationId').unsigned().references('medications.id');
       })
 
       .createTable('states', (t) => {
@@ -73,9 +85,8 @@ exports.up = (knex) =>
         t.increments('id').primary();
 
         t.integer('amount');
-        t.string('code').index().unique();
         t.integer('userId').unsigned().references('users.id');
-        t.integer('medicationId').unsigned().references('medications.id');
+        t.integer('productId').unsigned().references('products.id');
 
         t.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
         t.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
@@ -128,6 +139,7 @@ exports.down = (knex) =>
       .dropTableIfExists('services_medications')
       // .dropTableIfExists('services_tasks')
       .dropTableIfExists('visits')
+      .dropTableIfExists('products')
       .dropTableIfExists('medications')
       .dropTableIfExists('tasks')
       .dropTableIfExists('states')

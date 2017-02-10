@@ -5,6 +5,7 @@ import MetaController from './controllers/meta.controller';
 import AuthController from './controllers/auth.controller';
 import UsersController from './controllers/users.controller';
 import ServicesController from './controllers/services.controller';
+import VisitsController from './controllers/visits.controller';
 
 // Middlewares
 import authenticate from './middleware/authenticate';
@@ -32,6 +33,9 @@ routes.get('/services/:code', ServicesController.fetch);
 
 // @TODO
 // routes.get('/products', ProductsController.search);
+
+// Visits
+routes.post('/visits', authenticate, VisitsController.create);
 
 // Admin
 routes.get('/admin', accessControl('admin'), MetaController.index);
