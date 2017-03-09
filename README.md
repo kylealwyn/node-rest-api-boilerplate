@@ -35,7 +35,7 @@ Place a `.env` file in the top level of the directory you've cloned. These varia
 Your `.env` file can look something like this:
 
 ```shell
-MONGO_URI=mongo://somewhere:27017
+MONGO_URI=mongodb://somewhere:27017
 SESSION_SECRET=lolthisissecret
 ```
 
